@@ -1,0 +1,2 @@
+C:\Users\Voislav\Documents\Projects\AwesomeSocialNetwork\AwesomeSocialNetwork\obj\Debug\AwesomeSocialNetwork.njsprojResolveAssemblyReference.cache
+C:\Users\Voislav\Documents\Projects\AwesomeSocialNetwork\AwesomeSocialNetwork\bin\Microsoft.NodejsTools.WebRole.dll
