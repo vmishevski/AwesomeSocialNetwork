@@ -1,7 +1,7 @@
 describe('service:authenticationService', function () {
     'use strict';
 
-    var $httpMock, authService, routesUser, loginResponse, meResponse;
+    var $httpMock, authService, routesUser, loginResponse, meResponse, registerResponse;
 
     beforeEach(angular.mock.module('awesomeSocialNetworkApp'));
 
@@ -23,8 +23,8 @@ describe('service:authenticationService', function () {
     beforeEach(function () {
         loginResponse = $httpMock.when('POST', routesUser.login).respond(200, {token: 'token'});
         meResponse = $httpMock.when('GET', routesUser.me).respond(200, meUser);
+        registerResponse = $httpMock.whenPOST(routesUser.register, undefined).respond(200, {});
     });
-
 
     it('login: should save user token on login success', function (done) {
         inject(function ($rootScope) {
@@ -104,5 +104,57 @@ describe('service:authenticationService', function () {
             expect($rootScope.currentUser).toBeUndefined();
             expect($rootScope.token).toBeUndefined();
         });
+    });
+
+    it('register: should make request for register with user model', function (done) {
+        var user = {email: 'test@test.com', fullName: 'testy tester', password: '123123', confirmPassword: '123123'};
+        $httpMock.expectPOST(routesUser.register, user)
+            .respond(200, {});
+
+        authService.register(user)
+            .catch(failTest)
+            .finally(done);
+
+        $httpMock.flush();
+    });
+
+    it('register: should call authenticate after success register', function (done) {
+        //registerResponse.respond(400, '');
+        spyOn(authService, 'authenticate');
+
+        authService.register({email:'test@email.com'})
+            .then(function () {
+                expect(authService.authenticate).toHaveBeenCalled();
+            })
+            .catch(failTest())
+            .finally(done);
+
+        $httpMock.flush();
+    });
+
+    it('register: should not call authenticate on failling to register', function (done) {
+
+        inject(function ($q, $rootScope) {
+            spyOn(authService, 'authenticate').and.callFake(function () {
+                var defer = $q.defer();
+                defer.resolve();
+                return defer.promise;
+            });
+
+            authService.register({})
+                .catch(function (res) {
+                    var a = 100;
+                })
+                .finally(function () {
+                    expect(authService).not.toHaveBeenCalled();
+                    done();
+                });
+
+
+            $httpMock.flush();
+
+            $rootScope.$digest();
+        });
+
     });
 });

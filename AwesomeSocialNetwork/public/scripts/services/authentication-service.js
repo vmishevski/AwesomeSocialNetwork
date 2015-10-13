@@ -2,11 +2,15 @@
 
 var routesUser = {
     login: 'api/user/login',
-    me: 'api/user/me'
+    me: 'api/user/me',
+    register: 'api/user/register'
 };
 
 var authEvents = {
-    userUnauthorized: 'user-unauthorized-event'
+    userUnauthorizedEvent: 'user-unauthorized-event',
+    userNotAuthenticatedEvent: 'user-not-authenticated-event',
+    userLoginEvent: 'user-login-event',
+    userLogoutEvent: 'user-logout-event'
 };
 
 angular.module('awesomeSocialNetworkApp')
@@ -33,9 +37,13 @@ angular.module('awesomeSocialNetworkApp')
         self.register = function (user) {
             $log.log('auth-service:register');
 
+            return $http.post(routesUser.register, user)
+                .then(function () {
+                    return self.authenticate();
+                });
         };
 
-        self.authenticate = function (role) {
+        self.authenticate = function () {
             $log.log('auth-service:authenticate');
 
             return $http.get(routesUser.me)
@@ -44,6 +52,12 @@ angular.module('awesomeSocialNetworkApp')
                     return response;
                 });
         };
+
+        self.isAuthenticated = function () {
+            $log.log('auth-service:isAuthenticated');
+            return !!$rootScope.currentUser;
+        };
+
         self.clear = function () {
             $log.log('auth-service:clear');
 
@@ -65,7 +79,7 @@ angular.module('awesomeSocialNetworkApp')
             },
             'responseError': function (response) {
                 if (response.status === 401 || response.status === '401') {
-                    $rootScope.$broadcast(authEvents.userUnauthorized);
+                    $rootScope.$broadcast(authEvents.userUnauthorizedEvent);
                     $rootScope.testtest = 100;
                 }
 

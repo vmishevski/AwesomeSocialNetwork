@@ -31,6 +31,7 @@
     "karma-jasmine": "*",
     "karma": "*",
     "karma-phantomjs-launcher": "*",
+    "karma-chrome-launcher": "*",
     "gulp": "^3.9.0",
     "gulp-livereload": "^3.8.1",
     "nodemon": "^1.7.1"

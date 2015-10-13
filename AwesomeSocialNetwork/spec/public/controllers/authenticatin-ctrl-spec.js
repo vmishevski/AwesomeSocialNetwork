@@ -1,4 +1,4 @@
-describe('ctrl:authentcation', function () {
+describe('ctrl:authentication', function () {
     'use strict';
 
     var ctrl, authService, $controller, scope, $rootScope, $httpBackend;
