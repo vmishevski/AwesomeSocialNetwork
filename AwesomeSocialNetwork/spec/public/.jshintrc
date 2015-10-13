@@ -1,0 +1,11 @@
+{
+  "globals":{
+    "inject": false,
+    "mock": true,
+    "describe": true,
+
+    "it": true,
+    "beforeEach": true,
+    "expect": true
+  }
+}

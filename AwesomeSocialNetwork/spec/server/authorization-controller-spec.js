@@ -1,6 +1,4 @@
-﻿///<reference path="~/node_modules/jasmine/lib/jasmine.js"/>
-
-var ctrl = require('../../server/controllers/authorization-controller');
+﻿var ctrl = require('../../server/controllers/authorization-controller');
 var mongoose = require('mongoose');
 var mockgoose = require('mockgoose');
 require('../../server/model');
@@ -8,6 +6,7 @@ mockgoose(mongoose);
 
 describe('ctrl:authorization-controller', function (){
     var req, res, next, User, statusCode;
+
     beforeEach(function () {
         req = {};
         res = {
@@ -35,6 +34,7 @@ describe('ctrl:authorization-controller', function (){
         spyOn(res, 'send');
 
         ctrl.me(req, res, next);
+
 
         expect(res.send).toHaveBeenCalledWith(req.user);
         expect(res.send.calls.argsFor(0)).toEqual([req.user]);

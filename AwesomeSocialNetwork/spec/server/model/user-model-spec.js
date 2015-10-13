@@ -1,6 +1,6 @@
 ﻿var mongoose = require('mongoose');
 var mockgoose = require('mockgoose');
-
+require('../../../server/model');
 mockgoose(mongoose);
 
 describe('model:user', function (){

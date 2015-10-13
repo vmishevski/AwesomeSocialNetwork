@@ -3,12 +3,23 @@
  */
 
 angular.module('awesomeSocialNetworkApp')
-.controller('LoginCtrl', ['$scope', function ($scope) {
-        $scope.login = function () {
+    .controller('LoginCtrl', ['$scope', 'AuthenticationService', '$state', function ($scope, AuthenticationService, $state) {
+        'use strict';
 
+        $scope.loginModel = {
+            password: angular.noop(),
+            email: angular.noop()
+        };
+
+        $scope.login = function () {
+            AuthenticationService.login($scope.loginModel.email, $scope.loginModel.password)
+                .then(function () {
+                    $state.go('home');
+                });
         }
     }])
-.controller('RegisterCtrl', ['$scope', function ($scope) {
+
+    .controller('RegisterCtrl', ['$scope', function ($scope) {
         $scope.register = function () {
 
         }

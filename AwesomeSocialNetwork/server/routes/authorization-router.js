@@ -40,5 +40,5 @@ module.exports = function (app) {
     
     router.post('/register', authorizationCtrl.register);
 
-    app.use('/user', router);
+    app.use('/api/user', router);
 };

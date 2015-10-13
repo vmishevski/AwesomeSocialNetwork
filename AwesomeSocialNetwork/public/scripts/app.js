@@ -29,6 +29,9 @@ angular
             templateUrl: 'views/welcome.html'
         });
     })
+    .config(function ($httpProvider) {
+        $httpProvider.interceptors.push('tokenInjector');
+    })
     .run(function ($rootScope) {
         $rootScope.$on('$stateChangeError', function (event) {
             console.log('change error', event);
