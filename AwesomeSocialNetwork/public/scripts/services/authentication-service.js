@@ -58,6 +58,10 @@ angular.module('awesomeSocialNetworkApp')
             return !!$rootScope.currentUser;
         };
 
+        self.isAuthorized = function (role) {
+            return self.isAuthenticated() && ($rootScope.currentUser.roles && $rootScope.currentUser.roles.indexOf(role) > -1);
+        };
+
         self.clear = function () {
             $log.log('auth-service:clear');
 
@@ -65,7 +69,6 @@ angular.module('awesomeSocialNetworkApp')
             delete $rootScope.token;
         };
 
-        $rootScope.$on()
     }])
 
     .service('tokenInjector', ['$rootScope', 'authEvents', '$q', function ($rootScope, authEvents, $q) {

@@ -15,6 +15,9 @@ angular.module('awesomeSocialNetworkApp')
             AuthenticationService.login($scope.loginModel.email, $scope.loginModel.password)
                 .then(function () {
                     $state.go('home');
+                })
+                .catch(function (response) {
+
                 });
         }
     }])

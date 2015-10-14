@@ -133,8 +133,9 @@ describe('service:authenticationService', function () {
     });
 
     it('register: should not call authenticate on failling to register', function (done) {
+        inject(function ($q) {
+            registerResponse.respond(401, {});
 
-        inject(function ($q, $rootScope) {
             spyOn(authService, 'authenticate').and.callFake(function () {
                 var defer = $q.defer();
                 defer.resolve();
@@ -142,19 +143,12 @@ describe('service:authenticationService', function () {
             });
 
             authService.register({})
-                .catch(function (res) {
-                    var a = 100;
-                })
                 .finally(function () {
-                    expect(authService).not.toHaveBeenCalled();
+                    expect(authService.authenticate).not.toHaveBeenCalled();
                     done();
                 });
 
-
             $httpMock.flush();
-
-            $rootScope.$digest();
         });
-
     });
 });

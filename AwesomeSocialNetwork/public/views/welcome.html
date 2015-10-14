@@ -1,47 +1,50 @@
-<div class="container">
-    <div class="col-md-6">
-        <span>If you don't have an account, please register</span>
-        <div ng-controller="RegisterCtrl">
-            <form>
-                <div class="form-group">
-                    <label class="control-label">Email:</label>
-                    <input class="form-control" type="text">
-                </div>
-                <div class="form-group">
-                    <label class="control-label">Name:</label>
-                    <input class="form-control" type="text">
-                </div>
-                <div class="form-group">
-                    <label class="control-label">Password:</label>
-                    <input class="form-control" type="password">
-                </div>
-                <div class="form-group">
-                    <input class="btn" type="submit" value="Register" />
-                </div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-6 well">
+            <p>If you don't have an account, please register</p>
 
-            </form>
+            <div ng-controller="RegisterCtrl">
+                <form novalidate ng-submit="login()" name="registerForm">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="text" ng-model="loginModel.email" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" ng-model="loginModel.password" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary" type="submit">Login</button>
+                    </div>
+                </form>
+            </div>
+
         </div>
 
     </div>
+    <div class="row">
+        <div class="col-md-6 well">
+            <p>Or login here</p>
 
-    <div class="col-md-6">
-        <span>Or login here</span>
-        <div ng-controller="LoginCtrl">
-            <form>
-                <div class="form-group">
-                    <label>Email</label>
-                 q   <input class="form-control" type="text" />
-                </div>
-                <div class="form-group">
-                    <label>Password</label>
-                    <input class="form-control" type="password" />
-                </div>
-                <div class="form-group">
-                    <input type="submit" value="Login" />
-                </div>
-            </form>
+            <div ng-controller="LoginCtrl" name="loginForm">
+                <form novalidate ng-submit="login()">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input ng-model="loginModel.email" name="email" required="required" class="form-control" type="email"/>
+                        <span ng-show="loginForm.email.$error.email"> This is not a valid email.</span>
+                        <span ng-show="loginForm.email.$error.required">Use your email.</span>
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input class="form-control" name="password" type="password" required="required" ng-model="loginModel.password"/>
+                        <span ng-show="loginForm.password.$error.required">Password is required field</span>
+                        <span ng-bind="loginForm.password.$error.required"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Login" class="btn btn-primary"/>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
-
-    <div></div>
 </div>
