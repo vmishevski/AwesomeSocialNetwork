@@ -38,6 +38,9 @@ angular.module('awesomeSocialNetworkApp')
             $log.log('auth-service:register');
 
             return $http.post(routesUser.register, user)
+                .then(function(){
+                    return self.login(user.email, user.password);
+                })
                 .then(function () {
                     return self.authenticate();
                 });

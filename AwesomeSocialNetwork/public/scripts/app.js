@@ -27,7 +27,11 @@ angular
         $stateProvider.state('welcome',{
             url: '/welcome',
             templateUrl: 'views/welcome.html'
-        });
+        })
+            .state('home',{
+                url:'/home',
+                templateUrl:'views/home.html'
+            });
     })
     .config(function ($httpProvider) {
         $httpProvider.interceptors.push('tokenInjector');

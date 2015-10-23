@@ -8,29 +8,27 @@ var ctrl = {};
 
 var serializeUser = function (user){
     return jwt.encode(user, 'secret-key');
-}
+};
 
-ctrl.login = function (req, res, next) {
+ctrl.login = function (req, res) {
     var token = serializeUser(req.user);
     res.send({ token: token });
-    next();
 };
 ctrl.register = function (req, res, next) {
     debug(req.body);
     var User = mongoose.model('User');
     var newUser = new User(req.body);
     newUser.save(function (err) {
-        debug('user saved');
         if (err) {
             return next(err);
         }
+        debug('user saved');
         
         res.status(200);
         res.end();
-        //next(null, true);
     });
 };
-ctrl.me = function (req, res, next) {
+ctrl.me = function (req, res) {
     res.send(req.user);
 };
 

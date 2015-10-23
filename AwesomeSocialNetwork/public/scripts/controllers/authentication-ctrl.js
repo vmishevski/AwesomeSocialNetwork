@@ -12,18 +12,32 @@ angular.module('awesomeSocialNetworkApp')
         };
 
         $scope.login = function () {
-            AuthenticationService.login($scope.loginModel.email, $scope.loginModel.password)
-                .then(function () {
-                    $state.go('home');
-                })
-                .catch(function (response) {
+            if($scope.loginForm.$valid){
+                AuthenticationService.login($scope.loginModel.email, $scope.loginModel.password)
+                    .then(function () {
+                        $state.go('home');
+                    })
+                    .catch(function (response) {
 
-                });
+                    });
+            }
         }
     }])
 
-    .controller('RegisterCtrl', ['$scope', function ($scope) {
-        $scope.register = function () {
+    .controller('RegisterCtrl', ['AuthenticationService', '$state', '$scope', function (AuthenticationService, $state, $scope) {
 
+        this.user = {
+            email: '',
+            password: ''
+        };
+
+        this.register = function () {
+            if($scope.registerForm.$valid){
+                AuthenticationService.register(this.user)
+                    .then(function () {
+                        $state.go('home');
+
+                    });
+            }
         }
     }]);

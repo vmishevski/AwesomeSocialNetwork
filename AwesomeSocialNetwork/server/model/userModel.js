@@ -21,7 +21,7 @@ UserSchema.methods = {
      */
     passwordMatch: function (plainPassword) {
         var user = this;
-        return bcrypt.compareSync(plainPassword, user.password_hash);
+        return bcrypt.compareSync(plainPassword, user.hashed_password);
     },
     hashPassword: function (plainPassword) {
         return bcrypt.hashSync(plainPassword, this.salt);
@@ -32,8 +32,9 @@ UserSchema.methods = {
  * When setting password, set salt and hash_password
  */
 UserSchema.virtual('password').set(function (password) {
-    if (typeof (password) === 'number')
+    if (typeof (password) === 'number') {
         password = password.toString();
+    }
 
     this._password = password;
     this.salt = bcrypt.genSaltSync(10);
