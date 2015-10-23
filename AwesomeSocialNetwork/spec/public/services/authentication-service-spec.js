@@ -152,3 +152,67 @@ describe('service:authenticationService', function () {
         });
     });
 });
+
+describe('usernameUnique', function () {
+    beforeEach(angular.mock.module('awesomeSocialNetworkApp'));
+
+    var $httpMock, scope, elem;
+
+    var compileDirective = function (element) {
+        if(!element){
+            element = '<form name="form"><input type="text" name="inp" username-unique ng-model="val" /></form>';
+        }
+
+        inject(function (_$rootScope_, $compile) {
+            scope = _$rootScope_.$new();
+            scope.val = '';
+            $compile(element)(scope);
+            scope.$digest();
+        });
+    };
+
+    beforeEach(inject(function ($httpBackend) {
+        $httpMock = $httpBackend;
+
+        $httpMock.when('GET', 'api\/user\/usernameUnique\?username=available@test.me', undefined).respond(200, {unique: true});
+        $httpMock.when('GET', 'api\/user\/usernameUnique\?username=nonavailable@test.me', undefined).respond(200, {unique: false});
+        $httpMock.when('GET', 'api\/user\/usernameUnique\?username=error', undefined).respond(400, '');
+    }));
+
+    it('should reject validation when unique property is false', function () {
+        compileDirective();
+
+        scope.val = 'available@test.me';
+
+        $httpMock.flush();
+
+        expect(scope.form).toBeDefined();
+        expect(scope.form.$valid).toBeTruthy();
+        expect(scope.form.inp.$error.usernameUnique).toBeUndefined();
+    });
+
+    it('should resolve success when unique property is true', function () {
+        compileDirective();
+
+        scope.val = 'nonavailable@test.me';
+
+        $httpMock.flush();
+
+        expect(scope.form).toBeDefined();
+        expect(scope.form.$valid).toBeFalsy();
+        expect(scope.form.inp.$error.usernameUnique).toBeDefined();
+    });
+
+    it('should resolve success on http error', function () {
+        "use strict";
+        compileDirective();
+
+        scope.val = 'error';
+
+        $httpMock.flush();
+
+        expect(scope.form).toBeDefined();
+        expect(scope.form.$valid).toBeTruthy();
+        expect(scope.form.inp.$error.usernameUnique).toBeUndefined();
+    });
+});

@@ -92,8 +92,38 @@ angular.module('awesomeSocialNetworkApp')
                 return $q.reject(response);
             }
         };
-    }]);
+    }])
 
+    .directive('usernameUnique', ['$q', '$http', function ($q, $http) {
+        return{
+            require: 'ngModel',
+            link: function (scope, element, attributes, ngModelCtrl) {
+                ngModelCtrl.$asyncValidators.usernameUnique = function (modelValue, viewValue) {
+                    if(ngModelCtrl.$isEmpty(modelValue)){
+                        return $q.when();
+                    }
+
+                    var defer = $q.defer();
+                    $http.get('api/user/usernameUnique',{
+                        params: { username: modelValue }
+                    })
+                        .then(function (response) {
+                            if(response.data.unique){
+                                defer.resolve();
+                            }else{
+                                defer.reject();
+                            }
+                        }, function () {
+                            // if some error happened, we cannot know if username is unique
+                            // consider validation success and leave unique validation for server side processing
+                            defer.resolve();
+                        });
+
+                    return defer.promise;
+                }
+            }
+        }
+    }]);
 
 // login -> server OK -> save token
 // get user -> server OK -> save user

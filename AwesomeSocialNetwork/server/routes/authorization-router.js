@@ -17,8 +17,9 @@ module.exports = function (app) {
     
     passport.use(new LocalStrategy({ usernameField: 'email'}, function (username, password, done) {
         User.findOne({ email: username }, function (err, user) {
-            if (err)
+            if (err) {
                 return done(err);
+            }
             
             if (!user) {
                 return done(null, false);
@@ -39,6 +40,8 @@ module.exports = function (app) {
     router.post('/login', passport.authenticate('local', { session: false }), authorizationCtrl.login);
     
     router.post('/register', authorizationCtrl.register);
+
+    router.get('/usernameUnique', authorizationCtrl.usernameUnique);
 
     app.use('/api/user', router);
 };
