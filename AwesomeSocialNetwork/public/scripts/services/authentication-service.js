@@ -3,7 +3,9 @@
 var routesUser = {
     login: 'api/user/login',
     me: 'api/user/me',
-    register: 'api/user/register'
+    register: 'api/user/register',
+    changePassword: 'api/user/changePassword',
+    saveProfile: 'api/user/saveProfile'
 };
 
 var authEvents = {
@@ -18,7 +20,7 @@ angular.module('awesomeSocialNetworkApp')
 
     .value('routesUser', routesUser)
 
-    .service('AuthenticationService', ['$http', '$log', 'routesUser', '$rootScope', '$q', function ($http, $log, routesUser, $rootScope, $q) {
+    .service('AuthenticationService', ['$http', '$log', 'routesUser', '$rootScope', '$q', '$sessionStorage', function ($http, $log, routesUser, $rootScope, $q, $sessionStorage) {
         var self = this;
         self.login = function (email, password) {
             $log.log('auth-service:login', email, password);
@@ -27,11 +29,28 @@ angular.module('awesomeSocialNetworkApp')
                 .then(function (response) {
                     // we now have token. save it
                     $rootScope.token = response.data.token;
+                    $sessionStorage.token = response.data.token;
                     return response;
                 })
                 .then(function () {
                     return self.authenticate();
                 });
+        };
+
+        self.autoLogin = function () {
+            $log.log('auth-service:autoLogin');
+            if(!!$rootScope.currentUser){
+                $log.log('already authenticated')
+                return true;
+            }
+
+            if(!!$sessionStorage.currentUser && !!$sessionStorage.token){
+                $log.log('restoring current user from session', $sessionStorage.currentUser);
+                $rootScope.currentUser = $sessionStorage.currentUser;
+                $rootScope.token = $sessionStorage.token;
+            }
+
+            return self.isAuthenticated();
         };
 
         self.register = function (user) {
@@ -51,13 +70,15 @@ angular.module('awesomeSocialNetworkApp')
 
             return $http.get(routesUser.me)
                 .then(function (response) {
+                    $log.log('Authenticated', response.data);
                     $rootScope.currentUser = response.data;
+                    $sessionStorage.currentUser = $rootScope.currentUser;
                     return response;
                 });
         };
 
         self.isAuthenticated = function () {
-            $log.log('auth-service:isAuthenticated');
+            $log.log('auth-service:isAuthenticated', !!$rootScope.currentUser);
             return !!$rootScope.currentUser;
         };
 
@@ -70,15 +91,27 @@ angular.module('awesomeSocialNetworkApp')
 
             delete $rootScope.currentUser;
             delete $rootScope.token;
+            delete $sessionStorage.token;
         };
 
+        self.changePassword = function (changePasswordModel) {
+            return $http.post(routesUser.changePassword, changePasswordModel);
+        };
+
+        self.saveProfile = function (profileModel) {
+            return $http.post(routesUser.saveProfile, profileModel)
+                .then(function () {
+                    return self.authenticate();
+                });
+        }
     }])
 
     .service('tokenInjector', ['$rootScope', 'authEvents', '$q', function ($rootScope, authEvents, $q) {
         return {
             'request': function (config) {
-                if (!!$rootScope.token) {
-                    config.headers.Authorization = 'JWT ' + $rootScope.token;
+                var token = $rootScope.token;
+                if (!!token) {
+                    config.headers.Authorization = 'JWT ' + token;
                 }
 
                 return config;
@@ -86,7 +119,6 @@ angular.module('awesomeSocialNetworkApp')
             'responseError': function (response) {
                 if (response.status === 401 || response.status === '401') {
                     $rootScope.$broadcast(authEvents.userUnauthorizedEvent);
-                    $rootScope.testtest = 100;
                 }
 
                 return $q.reject(response);

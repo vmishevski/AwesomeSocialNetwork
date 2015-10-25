@@ -43,5 +43,9 @@ module.exports = function (app) {
 
     router.get('/usernameUnique', authorizationCtrl.usernameUnique);
 
+    router.post('/changePassword', passport.authenticate('jwt', {session: false}), authorizationCtrl.changePassword);
+
+    router.post('/saveProfile', passport.authenticate('jwt', {session: false}), authorizationCtrl.saveProfile);
+
     app.use('/api/user', router);
 };

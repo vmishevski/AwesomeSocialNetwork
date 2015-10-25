@@ -8,7 +8,8 @@ var UserSchema = new Schema( {
         required: true
     },
     fullName: {
-        type: String
+        type: String,
+        required: true
     },
     salt: { type: String, required: true },
     hashed_password: { type: String, required: true }
