@@ -53,6 +53,12 @@ angular.module('awesomeSocialNetworkApp')
         self.saveProfileSuccess = false;
 
         self.saveProfile = function () {
+            self.saveProfileError = [];
+
+            if($scope.profileForm.$invalid){
+                return;
+            }
+
             AuthenticationService.saveProfile(self.user)
                 .then(function () {
                     self.saveProfileSuccess = true;
@@ -80,6 +86,11 @@ angular.module('awesomeSocialNetworkApp')
 
         self.changePassword = function () {
             self.changePasswordError = [];
+
+            if(!$scope.changePasswordForm.$valid){
+                return;
+            }
+
             AuthenticationService.changePassword(self.changePasswordModel)
                 .then(function (response) {
                     self.changePasswordSuccess = true;

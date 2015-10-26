@@ -94,12 +94,12 @@ describe('service:authenticationService', function () {
         });
     });
 
-    it('clear: should reset currentUser and token from $rootScope', function () {
+    it('logout: should reset currentUser and token from $rootScope', function () {
         inject(function ($rootScope) {
             $rootScope.currentUser = {email: 'test' };
             $rootScope.token = 'test token';
 
-            authService.clear();
+            authService.logout();
 
             expect($rootScope.currentUser).toBeUndefined();
             expect($rootScope.token).toBeUndefined();

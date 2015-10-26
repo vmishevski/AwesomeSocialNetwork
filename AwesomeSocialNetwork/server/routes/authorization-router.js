@@ -12,7 +12,16 @@ module.exports = function (app) {
     app.use(passport.initialize());
 
     passport.use(new JwtStrategy({ secretOrKey: 'secret-key' }, function (payload, done) {
-        done(null, payload);
+        User.findOne({_id: payload.id}, function (err, user) {
+            if(err){
+                return done(err);
+            }
+
+            if(!user){
+                return done(null, false);
+            }
+            return done(null, user);
+        });
     }));
     
     passport.use(new LocalStrategy({ usernameField: 'email'}, function (username, password, done) {

@@ -48,6 +48,7 @@ angular.module('awesomeSocialNetworkApp')
                 $log.log('restoring current user from session', $sessionStorage.currentUser);
                 $rootScope.currentUser = $sessionStorage.currentUser;
                 $rootScope.token = $sessionStorage.token;
+                self.authenticate();
             }
 
             return self.isAuthenticated();
@@ -86,8 +87,8 @@ angular.module('awesomeSocialNetworkApp')
             return self.isAuthenticated() && ($rootScope.currentUser.roles && $rootScope.currentUser.roles.indexOf(role) > -1);
         };
 
-        self.clear = function () {
-            $log.log('auth-service:clear');
+        self.logout = function () {
+            $log.log('auth-service:logout');
 
             delete $rootScope.currentUser;
             delete $rootScope.token;

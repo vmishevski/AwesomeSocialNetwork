@@ -53,6 +53,22 @@ ctrl.usernameUnique = function (req, res, next) {
 };
 
 ctrl.changePassword = function (req, res, next) {
+    if(!req.body.oldPassword){
+        return res.status(400).send({'oldPassword': 'Old password is required field'});
+    }
+
+    if(!req.body.password){
+        return res.status(400).send({'password': 'Password is required field'});
+    }
+
+    if(!req.body.confirmPassword){
+        return res.status(400).send({'confirmPassword': 'ConfirmPassword is required field'});
+    }
+
+    if(req.body.password !== req.body.confirmPassword){
+        return res.status(400).send({'confirmPassword': 'Password do not match'});
+    }
+
     User.findOne({_id: req.user.id}, function (err, user) {
         if (err) {
             return next(err);

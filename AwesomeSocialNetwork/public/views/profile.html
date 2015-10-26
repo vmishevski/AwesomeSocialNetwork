@@ -1,9 +1,12 @@
 <form novalidate ng-submit="vm.saveProfile()" name="profileForm">
     <div class="form-group">
-        <input placeholder="Email" ng-model="vm.user.email" class="form-control" type="email" username-unique />
+        <input placeholder="Email" disabled ng-model="vm.user.email" class="form-control" type="email" />
     </div>
     <div class="form-group">
-        <input placeholder="Full name" type="text" ng-model="vm.user.fullName" class="form-control" />
+        <input placeholder="Full name" type="text" ng-model="vm.user.fullName" name="fullName" class="form-control" required />
+        <span class="has-error" ng-show="profileForm.fullName.$touched || profileForm.$submitted">
+            <span class="help-block" ng-show="profileForm.fullName.$error.required">Enter your name</span>
+        </span>
     </div>
     <div class="form-group has-success" ng-show="vm.saveProfileSuccess">
         <span class="help-block">Profile updated</span>
