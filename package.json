@@ -39,6 +39,7 @@
     "karma-chrome-launcher": "*",
     "karma-coverage": "latest",
     "karma-jasmine": "*",
-    "karma-ng-html2js-preprocessor": "^0.2.0"
+    "karma-ng-html2js-preprocessor": "^0.2.0",
+    "mockgoose": "^4.0.2"
   }
 }
