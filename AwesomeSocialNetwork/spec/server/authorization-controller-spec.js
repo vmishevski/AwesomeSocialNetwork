@@ -21,8 +21,8 @@ describe('ctrl:authorization-controller', function (){
 
             }
         };
-        next = function () {
-
+        next = function (err, d) {
+            if(err) throw new Error(err);
         };
         User = mongoose.model('User');
         statusCode = undefined;
@@ -41,7 +41,7 @@ describe('ctrl:authorization-controller', function (){
     });
     
     it('register:should save user from request body', function (done) {
-        req.body = { email: 'test@ttt.com', password: '123123' };
+        req.body = { email: 'test@ttt.com', fullName: 'test', password: '123123' };
         
 
         spyOn(res, 'send');

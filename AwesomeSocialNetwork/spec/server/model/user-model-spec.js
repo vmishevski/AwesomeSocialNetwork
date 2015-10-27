@@ -11,7 +11,7 @@ describe('model:user', function (){
     });
 
     it('should save hash of password and salt when saving new user', function (done) {
-        var user = new User({ email: 'test@yopmail.com', password: '123123'});
+        var user = new User({ email: 'test@yopmail.com', fullName: 'test', password: '123123'});
 
         user.save(function (err) {
             expect(err).not.toBeTruthy();

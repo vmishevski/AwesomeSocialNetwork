@@ -3,7 +3,7 @@ describe('service:authenticationService', function () {
 
     var $httpMock, authService, routesUser, loginResponse, meResponse, registerResponse;
 
-    beforeEach(angular.mock.module('awesomeSocialNetworkApp'));
+    beforeEach(angular.mock.module('awesomeSocialNetworkApp', 'templates'));
 
     beforeEach(inject(function ($httpBackend, _AuthenticationService_, _routesUser_) {
         $httpMock = $httpBackend;
@@ -154,7 +154,7 @@ describe('service:authenticationService', function () {
 });
 
 describe('usernameUnique', function () {
-    beforeEach(angular.mock.module('awesomeSocialNetworkApp'));
+    beforeEach(angular.mock.module('awesomeSocialNetworkApp', 'templates'));
 
     var $httpMock, scope, elem;
 
@@ -177,6 +177,7 @@ describe('usernameUnique', function () {
         $httpMock.when('GET', 'api\/user\/usernameUnique\?username=available@test.me', undefined).respond(200, {unique: true});
         $httpMock.when('GET', 'api\/user\/usernameUnique\?username=nonavailable@test.me', undefined).respond(200, {unique: false});
         $httpMock.when('GET', 'api\/user\/usernameUnique\?username=error', undefined).respond(400, '');
+        $httpMock.when('GET', 'api/user/me').respond(200, {email: 'test@test.com'});
     }));
 
     it('should reject validation when unique property is false', function () {
