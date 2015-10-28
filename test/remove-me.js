@@ -1,4 +1,4 @@
-require('../server-inst/model/index');
+require('../server/model/index');
 
 describe('mocha', function () {
     it('should pass', function () {
