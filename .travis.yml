@@ -5,4 +5,6 @@ node_js:
 services:
   - mongodb
 
-sudo: true
+before_script:
+  - npm install bower -g
+  - cd public && bower install && cd ..
