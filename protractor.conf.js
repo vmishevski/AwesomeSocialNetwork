@@ -1,13 +1,14 @@
 exports.config = {
-    framework: 'jasmine2',
+    framework: 'mocha',
     seleniumAddress: 'http://localhost:4444/wd/hub',
-    specs: ['spec/e2e/**/*.js'],
+    specs: ['test/e2e/**/*.js'],
     multiCapabilities: [{
         browserName: 'chrome'
     }],
 
-    // Options to be passed to Jasmine-node.
-    jasmineNodeOpts: {
-        showColors: true // Use colors in the command line report.
+    mochaOpts: {
+        reporter: 'spec',
+        slow: 3000,
+        timeout: 10000
     }
 };

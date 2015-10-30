@@ -1,25 +1,55 @@
-'use strict';
-
 /* globals
     browser, element, by
  */
 
-describe('login', function(){
-    it('should login successfully and go to home page', function () {
-        browser.get('http://localhost:3000/');
 
-        element(by.model('loginModel.email')).sendKeys('voislav@it-labs.com');
-        element(by.model('loginModel.password')).sendKeys('123123123');
-        element(by.model('loginModel.password')).submit();
-        expect(browser.getLocationAbsUrl()).toBe('/home');
+
+
+describe('login', function(){
+    var WelcomePage = function () {
+        var loginEmail = element(by.model('loginModel.email'));
+        var loginPassword = element(by.model('loginModel.password'));
+        var loginForm = element(by.name('loginForm'));
+
+        this.get= function () {
+            browser.get('http://localhost:3000/');
+        };
+
+        this.setEmailToLogin = function (val) {
+            loginEmail.sendKeys(val);
+        };
+
+        this.setPasswordToLogin = function (val) {
+            loginPassword.sendKeys(val);
+        };
+
+        this.login = function () {
+            loginForm.submit();
+        };
+    };
+
+    var helpers = require('./helpers')(),
+        expect = helpers.expect;
+
+    it('should login successfully and go to home page', function () {
+        var welcomePage = new WelcomePage();
+        welcomePage.get();
+        welcomePage.setEmailToLogin('voislav@it-labs.com');
+        welcomePage.setPasswordToLogin('qweqwe');
+        welcomePage.login();
+
+        expect(browser.getLocationAbsUrl()).to.eventually.equal('/home');
     });
 
     it('should stay on welcome page on fail login', function () {
-        browser.get('http://localhost:3000/');
+        var welcomePage = new WelcomePage();
+        welcomePage.get();
+        welcomePage.setEmailToLogin('not an email');
+        welcomePage.login();
 
-        element(by.model('loginModel.email')).sendKeys('fail');
-        element(by.model('loginModel.email')).submit();
-
-        expect(browser.getLocationAbsUrl()).toBe('/welcome');
+        expect(browser.getLocationAbsUrl()).to.eventually.equal('/welcome').then(function () {
+            expect($('[ng-show="loginForm.email.$error.email"]').isDisplayed()).to.eventually.be.true;
+            expect($('[ng-show="loginForm.password.$error.required"]').isDisplayed()).to.eventually.be.true;
+        });
     });
 });

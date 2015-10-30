@@ -73,7 +73,7 @@ describe('ctrl:authentication', function () {
            expect(authService.login).called;
            expect(state.go).not.called;
            expect(scope.validationErrors).to.be.true;
-       })
+       });
     });
 });
 
@@ -89,7 +89,7 @@ describe('ctrl:Register', function () {
         $provide.value('AuthenticationService', {
             autoLogin: sinon.stub(),
             isAuthenticated: sinon.stub()
-        })
+        });
     }));
 
     beforeEach(inject(function (_$controller_, $q) {
