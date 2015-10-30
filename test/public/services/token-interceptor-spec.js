@@ -40,9 +40,9 @@ describe('service:token-interceptor', function () {
         });
 
         // expect Authorization header to be set
-        //$httpMock.expectPOST(routesUser.me, undefined, function (headers) {
-        //    return headers.Authorization === 'JWT test-token';
-        //}).respond(200);
+        $httpMock.expectPOST(routesUser.me, undefined, function (headers) {
+            return headers.Authorization === 'JWT test-token';
+        }).respond(200);
 
         $http.post(routesUser.me, undefined);
         $httpMock.flush();
