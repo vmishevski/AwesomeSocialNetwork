@@ -51,6 +51,7 @@
     "mocha-istanbul": "^0.2.0",
     "mocha-lcov-reporter": "^1.0.0",
     "mockgoose": "^4.0.2",
+    "protractor": "^2.5.1",
     "sinon": "^1.17.2",
     "sinon-chai": "^2.8.0"
   }
