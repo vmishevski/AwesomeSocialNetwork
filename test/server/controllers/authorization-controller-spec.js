@@ -1,11 +1,11 @@
-﻿var ctrl = require('../../server/controllers/authorization-controller');
+﻿var ctrl = require('../../../server/controllers/authorization-controller');
 var mongoose = require('mongoose');
 var mockgoose = require('mockgoose'),
     sinon = require('sinon'),
     chai = require('chai'),
     expect = chai.expect,
     sinonChai = require('sinon-chai');
-require('../../server/model');
+require('../../../server/model/index');
 mockgoose(mongoose);
 
 chai.use(sinonChai);
