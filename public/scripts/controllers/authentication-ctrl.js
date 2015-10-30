@@ -66,7 +66,7 @@ angular.module('awesomeSocialNetworkApp')
                     if(response.status === 400){
                         self.saveProfileError = [];
                         if(response.data){
-                            angular.forEach(response.data, function (errorMessage, errorProperty) {
+                            angular.forEach(response.data, function (errorMessage) {
                                 self.saveProfileError.push(errorMessage);
                             });
                         }
@@ -92,7 +92,7 @@ angular.module('awesomeSocialNetworkApp')
             }
 
             AuthenticationService.changePassword(self.changePasswordModel)
-                .then(function (response) {
+                .then(function () {
                     self.changePasswordSuccess = true;
                     //$state.go('home');
                 }, function (response) {
@@ -100,7 +100,7 @@ angular.module('awesomeSocialNetworkApp')
                     if(response.status === 400){
                         self.saveProfileError = [];
                         if(response.data){
-                            angular.forEach(response.data, function (errorMessage, errorProperty) {
+                            angular.forEach(response.data, function (errorMessage) {
                                 self.changePasswordError.push(errorMessage);
                             });
                         }

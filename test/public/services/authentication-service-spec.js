@@ -157,6 +157,47 @@ describe('service:authenticationService', function () {
             $httpMock.flush();
         });
     });
+
+    it('autoLogin: should return true when currentUser on $rootScope is set', function () {
+        inject(function ($rootScope) {
+            $rootScope.currentUser = {email: 'test@test.com'};
+            authService.autoLogin.restore(); // restore the stub
+
+            expect(authService.autoLogin()).to.be.true;
+        })
+    });
+
+    it('autoLogin: should authenticate with session credentials when rootScope is not set', function () {
+        inject(function ($rootScope, $sessionStorage) {
+            $rootScope.currentUser = undefined;
+            $sessionStorage.currentUser = {email: 'test@test.com'};
+            $sessionStorage.token = 'token';
+
+            authService.autoLogin.restore();
+            expect(authService.autoLogin()).to.be.true;
+        });
+    });
+
+    it('changePassword: should make post request with provided argument', function () {
+        var model = {password: '111', confirmPassword: '111'};
+        $httpMock.expectPOST(routesUser.changePassword, model).respond(200, {});
+
+        authService.changePassword(model);
+
+        $httpMock.flush();
+    });
+
+    it('saveProfile: should make post with provided argument and call authenticate to retrieve latest profile data', function () {
+        var model = {email: 'test@test.com', fullName: 'test name'};
+        $httpMock.expectPOST(routesUser.saveProfile, model).respond(200, {});
+
+        sandbox.stub(authService, 'authenticate');
+        authService.saveProfile(model);
+
+        $httpMock.flush();
+
+        expect(authService.authenticate).called;
+    });
 });
 
 describe('usernameUnique', function () {
