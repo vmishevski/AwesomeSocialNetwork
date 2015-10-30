@@ -7,11 +7,9 @@ module.exports = function (config) {
         // base path that will be used to resolve all patterns (eg. files, exclude)
         basePath: '',
 
-
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['jasmine'],
-
+        frameworks: ['mocha', 'chai-as-promised', 'sinon-chai'],
 
         // list of files / patterns to load in the browser
         files: [
@@ -28,11 +26,10 @@ module.exports = function (config) {
             'public/scripts/app.js',
             'public/scripts/services/authentication-service.js',
             'public/scripts/**/*.js',
-            'spec/public/**/*spec.js',
+            'test/public/helpers.js',
+            'test/public/**/*spec.js',
             'public/views/**/*.html'
         ],
-
-        //plugins: ['karma-ng-html2js-preprocessor'],
 
         // list of files to exclude
         exclude: [],
@@ -46,48 +43,51 @@ module.exports = function (config) {
             '**/*.html': ['ng-html2js']
         },
 
-
         // test results reporter to use
         // possible values: 'dots', 'progress'
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
         reporters: ['coverage', 'progress'],
 
-
         // web server port
         port: 9876,
 
-
         // enable / disable colors in the output (reporters and logs)
         colors: true,
-
 
         // level of logging
         // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
         logLevel: config.LOG_INFO,
 
-
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch: true,
-
 
         // start these browsers
         // available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
         browsers: ['Chrome'],
-
 
         // Continuous Integration mode
         // if true, Karma captures browsers, runs the tests and exits
         singleRun: false,
 
         coverageReporter: {
-            type: 'html',
-            dir: 'coverage/',
-            file: 'coverage.html'
+            dir: 'coverage/public/',
+            reporters:[
+                { type: 'html', subdir: 'report-html' },
+                { type: 'lcovonly', subdir: '.', file: 'report-lcov.info' }
+            ]
         },
 
         ngHtml2JsPreprocessor: {
             stripPrefix: 'public/',
             moduleName: 'templates'
+        },
+
+        client: {
+            mocha: {
+                reporter: 'html' // change Karma's debug.html to the mocha web reporter
+
+                //ui: 'tdd'
+            }
         }
     })
 };

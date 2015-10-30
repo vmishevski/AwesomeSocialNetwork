@@ -5,7 +5,7 @@
     "describe": true,
 
     "it": true,
-    "beforeEach": true,
-    "expect": true
-  }
+    "beforeEach": true
+  },
+  "expr": true
 }

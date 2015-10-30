@@ -1,7 +1,13 @@
 describe('service:authenticationService', function () {
     'use strict';
 
-    var $httpMock, authService, routesUser, loginResponse, meResponse, registerResponse;
+    var $httpMock, authService, routesUser, loginResponse, meResponse, registerResponse, sandbox;
+
+    beforeEach(function () {
+        module(function ($provide) {
+
+        });
+    });
 
     beforeEach(angular.mock.module('awesomeSocialNetworkApp', 'templates'));
 
@@ -9,14 +15,20 @@ describe('service:authenticationService', function () {
         $httpMock = $httpBackend;
         authService = _AuthenticationService_;
         routesUser = _routesUser_;
+        sandbox = sinon.sandbox.create();
+        sandbox.stub(authService, 'autoLogin');
     }));
 
+    afterEach(function () {
+        sandbox.restore();
+    });
+
     var failTest = function (err) {
-        expect(err).toBeUndefined();
+        expect(err).not.exist;
     };
 
     var meUser = {
-        email: 'test@yopmail.com',
+        email: 'test@yopmail.com-ccccccccc',
         fullName: 'full name'
     };
 
@@ -28,12 +40,12 @@ describe('service:authenticationService', function () {
 
     it('login: should save user token on login success', function (done) {
         inject(function ($rootScope) {
-            authService.login('testEmail@yyy.ccc', '123123')
+            expect(authService.login('testEmail@yyy.ccc', '123123'))
+                .to.eventually.be.fulfilled
                 .then(function () {
-                    expect($rootScope.token).toEqual('token');
+                    expect($rootScope.token).to.equal('token');
                 })
-                .catch(failTest)
-                .finally(done);
+                .should.notify(done);
 
             $httpMock.flush();
         });
@@ -44,23 +56,22 @@ describe('service:authenticationService', function () {
         inject(function ($rootScope) {
             loginResponse.respond(401, {});
 
-            authService.login('t@ttt.com', 123)
-                .finally(function () {
-                    expect($rootScope.token).toBeUndefined();
-
-                    done();
-                });
+            expect(authService.login('t@ttt.com', 123))
+                .to.eventually.be.rejected
+                .then(function () {
+                    //expect($rootScope.token).not.exist;
+                }).should.notify(done);
 
             $httpMock.flush();
         });
     });
 
     it('login: should call authenticate after login', function (done) {
-        spyOn(authService, 'authenticate').and.callThrough();
+        sandbox.spy(authService, 'authenticate');
 
         authService.login('t@ttt.t', '123')
             .then(function () {
-                expect(authService.authenticate).toHaveBeenCalled();
+                expect(authService.authenticate).called;
                 done();
             })
             .catch(failTest)
@@ -73,22 +84,23 @@ describe('service:authenticationService', function () {
         inject(function ($rootScope) {
             authService.authenticate()
                 .then(function () {
-                    expect($rootScope.currentUser).toBeDefined();
-                    expect($rootScope.currentUser).toEqual(meUser);
+                    expect($rootScope.currentUser).to.exist;
+                    expect($rootScope.currentUser).to.eql(meUser);
                 });
 
             $httpMock.flush();
         });
     });
 
-    it('authenticate: should not set current user on fail authenticate', function () {
+    it('authenticate: should not set current user on fail authenticate', function (done) {
         inject(function ($rootScope) {
             meResponse.respond(401);
 
-            authService.authenticate()
+            expect(authService.authenticate())
+                .to.eventually.be.rejected
                 .then(function () {
-                    expect($rootScope.currentUser).toBeUndefined();
-                });
+                    expect($rootScope.currentUser).not.exist;
+                }).should.notify(done);
 
             $httpMock.flush();
         });
@@ -101,8 +113,8 @@ describe('service:authenticationService', function () {
 
             authService.logout();
 
-            expect($rootScope.currentUser).toBeUndefined();
-            expect($rootScope.token).toBeUndefined();
+            expect($rootScope.currentUser).not.exist;
+            expect($rootScope.token).not.exist;
         });
     });
 
@@ -111,23 +123,20 @@ describe('service:authenticationService', function () {
         $httpMock.expectPOST(routesUser.register, user)
             .respond(200, {});
 
-        authService.register(user)
-            .catch(failTest)
-            .finally(done);
+        expect(authService.register(user)).to.eventually.be.fulfilled.and.notify(done);
 
         $httpMock.flush();
     });
 
     it('register: should call authenticate after success register', function (done) {
         //registerResponse.respond(400, '');
-        spyOn(authService, 'authenticate');
+        sandbox.stub(authService, 'authenticate');
 
-        authService.register({email:'test@email.com'})
+        expect(authService.register({email:'test@email.com'}))
+            .to.eventually.be.fulfilled
             .then(function () {
-                expect(authService.authenticate).toHaveBeenCalled();
-            })
-            .catch(failTest())
-            .finally(done);
+                return expect(authService.authenticate).called;
+            }).should.notify(done);
 
         $httpMock.flush();
     });
@@ -136,17 +145,14 @@ describe('service:authenticationService', function () {
         inject(function ($q) {
             registerResponse.respond(401, {});
 
-            spyOn(authService, 'authenticate').and.callFake(function () {
-                var defer = $q.defer();
-                defer.resolve();
-                return defer.promise;
+            sandbox.stub(authService, 'authenticate', function () {
+                return $.when();
             });
 
-            authService.register({})
-                .finally(function () {
-                    expect(authService.authenticate).not.toHaveBeenCalled();
-                    done();
-                });
+            var res = authService.register({});
+            expect(res).to.be.rejected.and.then(function () {
+                return expect(authService.authenticate).not.called;
+            }).should.notify(done);
 
             $httpMock.flush();
         });
@@ -187,9 +193,9 @@ describe('usernameUnique', function () {
 
         $httpMock.flush();
 
-        expect(scope.form).toBeDefined();
-        expect(scope.form.$valid).toBeTruthy();
-        expect(scope.form.inp.$error.usernameUnique).toBeUndefined();
+        expect(scope.form).exist;
+        expect(scope.form.$valid).to.be.true;
+        expect(scope.form.inp.$error.usernameUnique).undefined;
     });
 
     it('should resolve success when unique property is true', function () {
@@ -199,9 +205,9 @@ describe('usernameUnique', function () {
 
         $httpMock.flush();
 
-        expect(scope.form).toBeDefined();
-        expect(scope.form.$valid).toBeFalsy();
-        expect(scope.form.inp.$error.usernameUnique).toBeDefined();
+        expect(scope.form).exist;
+        expect(scope.form.$valid).to.be.false;
+        expect(scope.form.inp.$error.usernameUnique).exist;
     });
 
     it('should resolve success on http error', function () {
@@ -212,8 +218,26 @@ describe('usernameUnique', function () {
 
         $httpMock.flush();
 
-        expect(scope.form).toBeDefined();
-        expect(scope.form.$valid).toBeTruthy();
-        expect(scope.form.inp.$error.usernameUnique).toBeUndefined();
+        expect(scope.form).exist;
+        expect(scope.form.$valid).to.be.true;
+        expect(scope.form.inp.$error.usernameUnique).to.be.undefined;
+    });
+
+    it('should not pass', function (done) {
+        inject(function ($q, $rootScope) {
+            var defer = $q.defer();
+            var a = defer.promise.then(function () {
+                return 100;
+            });
+
+            expect(a).to.eventually.equal(100).notify(done);
+
+            defer.resolve();
+
+            $rootScope.$apply();
+
+            return a;
+
+        });
     });
 });

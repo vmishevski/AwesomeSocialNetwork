@@ -75,6 +75,12 @@ angular.module('awesomeSocialNetworkApp')
                     $rootScope.currentUser = response.data;
                     $sessionStorage.currentUser = $rootScope.currentUser;
                     return response;
+                }, function (response) {
+                    delete $rootScope.currentUser;
+                    delete $rootScope.token;
+                    delete $sessionStorage.currentUser;
+                    delete $sessionStorage.token;
+                    return $q.reject(response);
                 });
         };
 
