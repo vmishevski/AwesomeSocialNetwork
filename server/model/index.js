@@ -1,8 +1,11 @@
 ﻿require('./userModel.js');
 var mongoose = require('mongoose'),
-    debug = require('debug')('app:db');
+    debug = require('debug')('app:db'),
+    config = require('../config');
 
-mongoose.connect('mongodb://127.0.0.1/AwesomeSocialNetwork', function (err) {
+console.log(config);
+
+mongoose.connect(config.db, function (err) {
     if(err){
         throw new Error(err);
     }else{
