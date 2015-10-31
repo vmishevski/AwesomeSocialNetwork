@@ -5,6 +5,11 @@ node_js:
 services:
   - mongodb
 
+cache:
+  directories:
+    - node_modules
+    - public/bower_components
+
 before_script:
   - npm install bower -g
   - cd public && bower install && cd ..
