@@ -22,7 +22,7 @@ describe('ctrl:authorization-controller', function (){
     });
 
     beforeEach(function () {
-        req = {};
+        req = { body: {}};
         res = {
             send: function (){
 
@@ -35,11 +35,7 @@ describe('ctrl:authorization-controller', function (){
 
             }
         };
-        next = function (err) {
-            if(err) {
-                throw new Error(err);
-            }
-        };
+        next = sinon.stub();
         User = mongoose.model('User');
         statusCode = undefined;
     });
@@ -47,7 +43,7 @@ describe('ctrl:authorization-controller', function (){
     it('me:should return logged user', function () {
 
         req.user = { name: 'voislav' };
-        
+
         sandbox.spy(res, 'send');
 
         ctrl.me(req, res, next);
@@ -92,7 +88,233 @@ describe('ctrl:authorization-controller', function (){
         ctrl.login(req, res, next);
         
         expect(res.send).called;
-        //expect(res.send.calls.argsFor(0)[0]).toBeDefined();
+        expect(res.send).calledWith(sinon.match.defined);
+        expect(res.send).calledWith(sinon.match({token: sinon.match.defined}));
+    });
+
+    it('unique: should respond with status 400 when username not found in query', function () {
+        req.query = {};
+
+        sandbox.spy(res, 'status');
+        sandbox.spy(res, 'end');
+
+        ctrl.usernameUnique(req, res, next);
+
+        expect(res.status).calledWith(400);
+        expect(res.end).called;
+    });
+
+    it('unique: should respond with {unique: true} when user not found with that username', function (done) {
+        req.query = {username: 'username'};
+
+        sandbox.spy(res, 'status');
+
+        sandbox.stub(User, 'findOne', function (f, cb) {
+            cb(undefined, undefined); // return user not found
+        });
+        sandbox.stub(res, 'send', function () {
+            expect(res.status).calledWith(200);
+            expect(res.send).calledWith(sinon.match({unique: true}));
+            done();
+        });
+
+
+
+        ctrl.usernameUnique(req, res, next);
+    });
+
+    it('unique: should respond with {unique: false} when user found with that username', function (done) {
+        req.query = {username: 'username'};
+
+        sandbox.spy(res, 'status');
+
+        sandbox.stub(User, 'findOne', function (f, cb) {
+            cb(undefined, {email: 'test@email.com'}); // return some user
+        });
+        sandbox.stub(res, 'send', function () {
+            expect(res.status).calledWith(200);
+            expect(res.send).calledWith(sinon.match({unique: false}));
+            done();
+        });
+
+        ctrl.usernameUnique(req, res, next);
+    });
+
+    it('unique: propagete db error', function () {
+        var err = {someError: 'desc'};
+        req.query = {username: 'username'};
+        sandbox.stub(User, 'findOne', function (f, cb) {
+            cb(err,undefined); // return some user
+        });
+
+        sinon.spy(res, 'send');
+        next = sinon.spy();
+        ctrl.usernameUnique(req, res, next);
+
+        expect(next).calledWith(err);
+        expect(res.send).not.called;
+    });
+
+    describe('changePassword', function () {
+        var req, sandbox;
+        beforeEach(function () {
+            sandbox = sinon.sandbox.create();
+            req = {body: {}};
+            req.body.oldPassword = '123123';
+            req.body.password = '123123';
+            req.body.confirmPassword = '123123';
+            req.user= {id: '123', password: '123123'};
+        });
+
+        afterEach(function () {
+            sandbox.restore();
+        });
+
+        it('changePassword: should respond with 400 on missing old password', function () {
+
+            delete req.body.oldPassword;
+            sandbox.stub(res, 'status').returns(res);
+            sandbox.stub(res, 'send').returns(res);
+
+            ctrl.changePassword(req, res, next);
+
+            expect(res.status).calledWith(400);
+            expect(res.send).calledWith(sinon.match.defined);
+        });
+
+        it('changePassword: should respond with 400 on missing new password', function () {
+            delete req.body.password;
+            sandbox.stub(res, 'status').returns(res);
+            sandbox.stub(res, 'send').returns(res);
+
+            ctrl.changePassword(req, res, next);
+
+            expect(res.status).calledWith(400);
+            expect(res.send).calledWith(sinon.match.defined);
+        });
+
+        it('changePassword: should respond with 400 on missing confirm password', function () {
+            delete req.body.confirmPassword;
+            sandbox.stub(res, 'status').returns(res);
+            sandbox.stub(res, 'send').returns(res);
+
+            ctrl.changePassword(req, res, next);
+
+            expect(res.status).calledWith(400);
+            expect(res.send).calledWith(sinon.match.defined);
+        });
+
+        it('changePassword: should respond with 400 on not matching provided pass and confirm pass', function () {
+            req.body.confirmPassword = 'different';
+            sandbox.stub(res, 'status').returns(res);
+            sandbox.stub(res, 'send').returns(res);
+
+            ctrl.changePassword(req, res, next);
+
+            expect(res.status).calledWith(400);
+            expect(res.send).calledWith(sinon.match.defined);
+        });
+
+        it('changePassword: should respond with 400 when provided password doesnt match logged user password', function () {
+            sandbox.stub(res, 'status').returns(res);
+            sandbox.stub(res, 'send').returns(res);
+            var user = {
+                passwordMatch: sinon.stub().returns(false)
+            };
+
+            sandbox.stub(User, 'findOne').callsArgWith(1, undefined, user);
+
+            ctrl.changePassword(req, res, next);
+
+            expect(res.status).calledWith(400);
+            expect(res.send).calledWith(sinon.match.defined);
+        });
+
+        it('changePassword: should respond with 200 when provided password matches', function () {
+            sandbox.stub(res, 'status').returns(res);
+            sandbox.stub(res, 'send').returns(res);
+            var user = {
+                passwordMatch: sinon.stub().returns(true),
+                save: sandbox.stub().callsArgWith(0, undefined)
+            };
+
+            sandbox.stub(User, 'findOne').callsArgWith(1, undefined, user);
+
+            ctrl.changePassword(req, res, next);
+
+            expect(res.status).calledWith(200);
+            expect(res.send).calledWith(sinon.match.defined);
+        });
+
+        it('changePassword: should propagate find user error', function () {
+            sandbox.stub(res, 'status').returns(res);
+            sandbox.stub(res, 'send').returns(res);
+            var err = {};
+
+            sandbox.stub(User, 'findOne').callsArgWith(1,err);
+
+            ctrl.changePassword(req, res, next);
+            expect(res.status).not.called;
+            expect(next).calledWith(err);
+        });
+
+        it('changePassword: should propagate find user error', function () {
+            sandbox.stub(res, 'status').returns(res);
+            sandbox.stub(res, 'send').returns(res);
+            var err = {};
+            var user = {
+                passwordMatch: sinon.stub().returns(true),
+                save: sandbox.stub().callsArgWith(0, err)
+            };
+
+            sandbox.stub(User, 'findOne').callsArgWith(1,undefined, user);
+
+            ctrl.changePassword(req, res, next);
+            expect(res.status).not.called;
+            expect(next).calledWith(err);
+        });
+    });
+
+    describe('saveProfile', function () {
+        var sandbox, err = {}, user = {};
+
+        beforeEach(function () {
+            sandbox = sinon.sandbox.create();
+            req = {body: {fullName: 'new name'}, user: {id: '123123'}};
+            req.body.fullName = '123123';
+
+            user.save = sandbox.stub().callsArgWith(0, undefined);
+            sandbox.stub(res, 'status').returns(res);
+            sandbox.stub(res, 'send').returns(res);
+            sandbox.stub(User, 'findOne').callsArgWith(1, undefined, user);
+        });
+
+        afterEach(function () {
+            sandbox.restore();
+        });
+
+        it('saveProfile: should set full name from body and save', function () {
+            ctrl.saveProfile(req, res, next);
+
+            expect(user.fullName).to.equal(req.body.fullName);
+            expect(user.save).called;
+            expect(res.status).calledWith(200);
+            expect(res.send).calledWith(user);
+        });
+
+        it('saveProfile: should propagate find user error', function () {
+            User.findOne.callsArgWith(1, err, undefined);
+            ctrl.saveProfile(req, res, next);
+
+            expect(next).calledWith(err);
+        });
+
+        it('saveProfile: should propagate save user error', function () {
+            user.save.callsArgWith(0, err, undefined);
+            ctrl.saveProfile(req, res, next);
+
+            expect(next).calledWith(err);
+        });
     });
 
 });

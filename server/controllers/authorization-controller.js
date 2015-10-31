@@ -41,7 +41,7 @@ ctrl.usernameUnique = function (req, res, next) {
 
     User.findOne({email: req.query.username}, function (err, user) {
         if (err) {
-            next(err);
+            return next(err);
         }
 
         if (!!user) {

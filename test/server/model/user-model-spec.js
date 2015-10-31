@@ -3,7 +3,7 @@ var mockgoose = require('mockgoose');
 require('../../../server/model');
 var chai = require('chai'),
     expect = chai.expect;
-mockgoose(mongoose);
+//mockgoose(mongoose);
 
 describe('model:user', function (){
     var User;
