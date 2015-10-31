@@ -70,4 +70,4 @@ gulp.task('open', function () {
 
 gulp.task('default', ['serve', 'open']);
 
-gulp.task('test:integration', ['webdriver_update', 'spawn', 'protractor']);
+gulp.task('test:integration', ['webdriver_update', 'spawn'], ['protractor']);
