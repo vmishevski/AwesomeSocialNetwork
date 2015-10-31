@@ -1,27 +1,28 @@
 language: node_js
 node_js:
-  - "0.12"
-
+- '0.12'
 services:
-  - mongodb
-
+- mongodb
 cache:
   directories:
-    - node_modules
-    - public/bower_components
-
+  - node_modules
+  - public/bower_components
 before_script:
-  - npm install bower -g
-  - cd public && bower install && cd ..
-  - npm install protractor -g
-  - "export DISPLAY=:99.0"
-  - "sh -e /etc/init.d/xvfb start"
-  - sleep 5 # give xvfb some time to start
-
+- npm install bower -g
+- cd public && bower install && cd ..
+- npm install protractor -g
+- export DISPLAY=:99.0
+- sh -e /etc/init.d/xvfb start
+- sleep 5
 script:
-  - istanbul cover ./node_modules/mocha/bin/_mocha test/server/**/*.js  --dir ./coverage/server/ --report lcovonly -- -R spec
-  - karma start --browsers Firefox --single-run
-  - ./node_modules/.bin/lcov-result-merger 'coverage/**/*lcov.info' | ./node_modules/coveralls/bin/coveralls.js
-
+- istanbul cover ./node_modules/mocha/bin/_mocha test/server/**/*.js  --dir ./coverage/server/
+  --report lcovonly -- -R spec
+- karma start --browsers Firefox --single-run
+- "./node_modules/.bin/lcov-result-merger 'coverage/**/*lcov.info' | ./node_modules/coveralls/bin/coveralls.js"
 after_script:
-  - rm -rf ./coverage
+- rm -rf ./coverage
+deploy:
+  provider: heroku
+  app: awesome-social-network
+  api_key:
+    secure: Tz6oMqImCJZASGLQkix/i4VsfdVW2AGxPNmJl6RmkVOlRwqkmFQTlBItQN/xihr82veBUNwEYBV9Fw9nwydPMX/+JTwUhWZJvrx+hMFW9KL2L+7qvDqBr3StE9MvfouegKNFy1Jb8r7O6VeRvwNNvdBtH51zyKISIFYMx1pymleWZSwj9/clmqfoQHn5qfAbSz7BUWgo6hlWBHMB1HkNoj+i5VfYUvjDHwTstBUGqd68rzeWM3+J+Pe3R4CY3tXMH/8MvwM3DOZy35s9RidkgZcjKUiip0GRcnP6sUpDuTKdrrgZBbR4grnc6WuiM2yzWCTpEga0XxTvRLKbit0KfMdw8G5bz/ivkRxlZErpG/u1/dzU+iZ5XpDDfCZ3LZwySVtLHV4aefAuHkt5h2rm3xTVjgMd/02EjVX3Fw8/+8931T/Of1hxCAZvHkYDEwlHQDZg5YnaEvKChdbN4cwMNVXEkx6yTQA1+Nsf8DzEul+OD0ERCoNCHQlx3PFNtbTAQayW+VrDuoJ8wSrbu2H1a9/UP+7UQNYJzwBXeUwkiLtpEDBC0gwUr2JoVgcION5Mg3eVTmK/H/XguhEjy3wIjFWRpS3fwEzBtV3KGgpQ6Og4Q9U2k1njJ7eTzHAvEUi9CpLMyFIfKFAfJwA/uyVceBBtaxt0IP4pckcPIzn/fT0=
