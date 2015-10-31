@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "istanbul cover ./node_modules/mocha/bin/_mocha test/server/**/*.js  --dir ./coverage/server/ --report lcovonly -- -R spec && karma start --browsers Firefox --single-run && ./node_modules/.bin/lcov-result-merger 'coverage/**/*lcov.info' | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage && gulp protractor test:integration && gulp test:integration"
+    "test": "istanbul cover ./node_modules/mocha/bin/_mocha test/server/**/*.js  --dir ./coverage/server/ --report lcovonly -- -R spec && karma start --browsers Firefox --single-run && ./node_modules/.bin/lcov-result-merger 'coverage/**/*lcov.info' | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage && gulp test:integration"
   },
   "description": "AwesomeSocialNetwork",
   "author": {
@@ -34,6 +34,7 @@
     "gulp": "^3.9.0",
     "gulp-connect": "latest",
     "gulp-livereload": "^3.8.1",
+    "gulp-nodemon": "^2.0.4",
     "gulp-open": "latest",
     "gulp-protractor": "^1.0.0",
     "istanbul": "^0.4.0",
