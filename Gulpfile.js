@@ -28,7 +28,7 @@ gulp.task('spawn', function () {
     });
 });
 
-gulp.task('protractor', function () {
+gulp.task('protractor', ['webdriver_update', 'spawn'], function () {
     gulp.src(['./src/tests/*.js'])
         .pipe(protractor({
             configFile: 'protractor.conf.js',
@@ -70,4 +70,4 @@ gulp.task('open', function () {
 
 gulp.task('default', ['serve', 'open']);
 
-gulp.task('test:integration', ['webdriver_update', 'spawn'], ['protractor']);
+gulp.task('test:integration', ['protractor']);
