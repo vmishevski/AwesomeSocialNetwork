@@ -15,8 +15,8 @@ var watchLivereload = function () {
 var child;
 
 gulp.task('spawn', function () {
-    var spawn = require('child_process').spawn;
-    child = spawn('node ./bin/www');
+    var exec = require('child_process').exec;
+    child = exec('node ./bin/www');
     child.stdout.on('data', function(data) {
         console.log('stdout: ' + data);
     });
@@ -34,7 +34,11 @@ gulp.task('protractor', function () {
             configFile: 'protractor.conf.js',
             args: ['--baseUrl', 'http://127.0.0.1:3000']
         }))
-        .on('error', function(e) { throw e });
+        .on('error', function(e) { throw e; })
+        .on('end', function () {
+            //child.disconnect();
+            //child.kill('SIGHUP');
+        })
 });
 
 gulp.task('webdriver_update', webdriver_update );
