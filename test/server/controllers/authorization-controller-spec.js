@@ -378,6 +378,29 @@ describe('ctrl:authorization-controller', function (){
             expect(next).calledWith(err);
         });
 
+        it('saveProfile: should not change profileImage when both are same', function (done) {
+            req.body.profileImage = {public_id: 'slika'};
+            var staraSlika = {public_id: 'slika'};
+            user.profileImage = staraSlika;
+            var genericImage = {public_id: 'genericImage'};
+            imageHelper.imageExists.returns(q.resolve(true));
+            imageHelper.setImageAsValid.returns(q.resolve());
+            imageHelper.getGenericImage.returns(q.resolve(genericImage));
+
+            res.send.restore();
+            sandbox.stub(res, 'send', function () {
+                expect(user.fullName).to.equal(req.body.fullName);
+                expect(user.profileImage).exist;
+                expect(user.profileImage).to.equal(staraSlika);
+                expect(user.save).called;
+                expect(res.status).calledWith(200);
+                expect(res.send).calledWith(user);
+                done();
+            });
+
+            ctrl.saveProfile(req, res, next);
+        });
+
         it('saveProfile: should propagate save user error', function (done) {
             user.save.callsArgWith(0, err, undefined);
             imageHelper.imageExists.returns(q.resolve(true));

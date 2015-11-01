@@ -11,8 +11,8 @@ var UserSchema = new Schema( {
         type: String,
         required: true
     },
-    profileImage:{
-        id: String,
+    profileImage: {
+        public_id: String,
         url: String
     },
     salt: { type: String, required: true },

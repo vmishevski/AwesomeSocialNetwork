@@ -114,21 +114,23 @@ ctrl.saveProfile = function (req, res, next) {
         };
 
         var imageHelper = require('../common/images-helper');
-        if(!!profile.profileImage && !!profile.profileImage.public_id
-            && profile.profileImage.public_id !== user.profileImage.public_id){
-
-            imageHelper.imageExists(profile.profileImage.public_id)
-                .then(function (exists) {
-                    if (exists) {
-                        user.profileImage = profile.profileImage;
-                        return imageHelper.setImageAsValid(profile.profileImage.public_id);
-                    }else{
-                        return setGenericImage()
-                    }
-                })
-                .then(function () {
-                    setProfileImage.resolve();
-                })
+        if(!!profile.profileImage && !!profile.profileImage.public_id){
+            if(profile.profileImage.public_id === user.profileImage.public_id){
+                setProfileImage.resolve();
+            }else{
+                imageHelper.imageExists(profile.profileImage.public_id)
+                    .then(function (exists) {
+                        if (exists) {
+                            user.profileImage = profile.profileImage;
+                            return imageHelper.setImageAsValid(profile.profileImage.public_id);
+                        }else{
+                            return setGenericImage()
+                        }
+                    })
+                    .then(function () {
+                        setProfileImage.resolve();
+                    })
+            }
         } else {
             setGenericImage();
         }
