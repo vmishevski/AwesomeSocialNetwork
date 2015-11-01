@@ -275,7 +275,7 @@ describe('ctrl:authorization-controller', function (){
         });
     });
 
-    describe.only('saveProfile', function () {
+    describe('saveProfile', function () {
         var sandbox, err = {}, user = {}, imageHelper, q;
 
         beforeEach(function () {
