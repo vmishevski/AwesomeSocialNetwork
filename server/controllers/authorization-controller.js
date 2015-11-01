@@ -105,6 +105,14 @@ ctrl.saveProfile = function (req, res, next) {
         user.fullName = profile.fullName;
         var setProfileImage = q.defer();
 
+        var setGenericImage = function () {
+            imageHelper.getGenericImage()
+                .then(function (genericImage) {
+                    user.profileImage = genericImage;
+                    setProfileImage.resolve();
+                });
+        };
+
         var imageHelper = require('../common/images-helper');
         if(!!profile.profileImage && !!profile.profileImage.public_id
             && profile.profileImage.public_id !== user.profileImage.public_id){
@@ -114,19 +122,15 @@ ctrl.saveProfile = function (req, res, next) {
                     if (exists) {
                         user.profileImage = profile.profileImage;
                         return imageHelper.setImageAsValid(profile.profileImage.public_id);
+                    }else{
+                        return setGenericImage()
                     }
-
-                    return exists;
                 })
                 .then(function () {
                     setProfileImage.resolve();
                 })
         } else {
-            user.profileImage = {};
-            user.profileImage.url = imageHelper.getGenericImage()
-                .finally(function () {
-                    setProfileImage.resolve();
-                });
+            setGenericImage();
         }
 
         setProfileImage.promise.then(function () {
@@ -137,9 +141,7 @@ ctrl.saveProfile = function (req, res, next) {
 
                 return res.status(200).send(user);
             });
-        });
-
-
+        }).done();
     });
 };
 

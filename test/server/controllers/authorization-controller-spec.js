@@ -275,18 +275,24 @@ describe('ctrl:authorization-controller', function (){
         });
     });
 
-    describe('saveProfile', function () {
-        var sandbox, err = {}, user = {};
+    describe.only('saveProfile', function () {
+        var sandbox, err = {}, user = {}, imageHelper, q;
 
         beforeEach(function () {
+            imageHelper = require('../../../server/common/images-helper');
+            q = require('q');
             sandbox = sinon.sandbox.create();
-            req = {body: {fullName: 'new name'}, user: {id: '123123'}};
+            req = {body: {fullName: 'new name', profileImage: {public_id: 'newpic'}}, user: {id: '123123' }};
             req.body.fullName = '123123';
 
+            user.profileImage = {public_id: 'prevpic'};
             user.save = sandbox.stub().callsArgWith(0, undefined);
             sandbox.stub(res, 'status').returns(res);
-            sandbox.stub(res, 'send').returns(res);
+            sandbox.stub(res, 'send');
             sandbox.stub(User, 'findOne').callsArgWith(1, undefined, user);
+            sandbox.stub(imageHelper, 'setImageAsValid');
+            sandbox.stub(imageHelper, 'imageExists');
+            sandbox.stub(imageHelper, 'getGenericImage');
         });
 
         afterEach(function () {
@@ -294,12 +300,75 @@ describe('ctrl:authorization-controller', function (){
         });
 
         it('saveProfile: should set full name from body and save', function () {
-            ctrl.saveProfile(req, res, next);
+            imageHelper.imageExists.returns(q.resolve(true));
+            imageHelper.setImageAsValid.returns(q.resolve());
 
-            expect(user.fullName).to.equal(req.body.fullName);
-            expect(user.save).called;
-            expect(res.status).calledWith(200);
-            expect(res.send).calledWith(user);
+            res.send.restore();
+            sandbox.stub(res, 'send', function () {
+                expect(user.fullName).to.equal(req.body.fullName);
+                expect(user.save).called;
+                expect(res.status).calledWith(200);
+                expect(res.send).calledWith(user);
+            });
+
+            ctrl.saveProfile(req, res, next);
+        });
+
+        it('saveProfile: should change profile', function (done) {
+            imageHelper.imageExists.returns(q.resolve(true));
+            imageHelper.setImageAsValid.returns(q.resolve());
+
+            res.send.restore();
+            sandbox.stub(res, 'send', function () {
+                expect(user.fullName).to.equal(req.body.fullName);
+                expect(user.profileImage).exist;
+                expect(user.profileImage.public_id).to.equal(req.body.profileImage.public_id);
+                expect(user.save).called;
+                expect(res.status).calledWith(200);
+                expect(res.send).calledWith(user);
+                done();
+            });
+
+            ctrl.saveProfile(req, res, next);
+        });
+
+        it('saveProfile: should set generic image when no profile was set', function (done) {
+            var genericImage = {public_id: 'genericImage'};
+            imageHelper.getGenericImage.returns(q.resolve(genericImage));
+            imageHelper.imageExists.returns(q.resolve(false));
+
+            res.send.restore();
+            sandbox.stub(res, 'send', function () {
+                expect(user.fullName).to.equal(req.body.fullName);
+                expect(user.profileImage).exist;
+                expect(user.profileImage).to.equal(genericImage);
+                expect(user.save).called;
+                expect(res.status).calledWith(200);
+                expect(res.send).calledWith(user);
+                done();
+            });
+
+            ctrl.saveProfile(req, res, next);
+        });
+
+        it('saveProfile: should set generic image when image was not found', function (done) {
+            req.body.profileImage = undefined;
+            var genericImage = {public_id: 'genericImage'};
+            imageHelper.getGenericImage.returns(q.resolve(genericImage));
+
+
+            res.send.restore();
+            sandbox.stub(res, 'send', function () {
+                expect(user.fullName).to.equal(req.body.fullName);
+                expect(user.profileImage).exist;
+                expect(user.profileImage).to.equal(genericImage);
+                expect(user.save).called;
+                expect(res.status).calledWith(200);
+                expect(res.send).calledWith(user);
+                done();
+            });
+
+            ctrl.saveProfile(req, res, next);
         });
 
         it('saveProfile: should propagate find user error', function () {
@@ -309,11 +378,17 @@ describe('ctrl:authorization-controller', function (){
             expect(next).calledWith(err);
         });
 
-        it('saveProfile: should propagate save user error', function () {
+        it('saveProfile: should propagate save user error', function (done) {
             user.save.callsArgWith(0, err, undefined);
-            ctrl.saveProfile(req, res, next);
+            imageHelper.imageExists.returns(q.resolve(true));
+            imageHelper.setImageAsValid.returns(q.resolve());
 
-            expect(next).calledWith(err);
+            //next = sandbox.stub();
+            next = function (theError) {
+                expect(theError).to.equal(theError);
+                done();
+            };
+            ctrl.saveProfile(req, res, next);
         });
     });
 
