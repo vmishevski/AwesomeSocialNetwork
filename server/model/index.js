@@ -1,7 +1,7 @@
 ﻿require('./userModel.js');
 var mongoose = require('mongoose'),
     debug = require('debug')('app:db'),
-    config = require('../config');
+    config = require('config');
 
 console.log(config);
 

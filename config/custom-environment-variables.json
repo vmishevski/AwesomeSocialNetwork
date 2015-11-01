@@ -1,0 +1,4 @@
+{
+  "db": "MONGOLAB_URI",
+  "imageServer": "CLOUDINARY_URL"
+}
