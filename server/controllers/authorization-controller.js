@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 require('../model');
 var User = mongoose.model('User');
+var q = require('q');
 
 var ctrl = {};
 
@@ -102,20 +103,43 @@ ctrl.saveProfile = function (req, res, next) {
 
         var profile = req.body;
         user.fullName = profile.fullName;
-        var imageHelper = require('../common/images-helper');
-        if(!!profile.profileImage && profile.id && imageHelper.isValidImage('invalid')){
-            user.profileImage = profile.profileImage;
-        }else{
-            user.profileImage = {};
-            user.profileImage.url = imageHelper.getGenericUserImageUrl();
-        }
-        user.save(function (err) {
-            if(err){
-                return next(err);
-            }
+        var setProfileImage = q.defer();
 
-            return res.status(200).send(user);
+        var imageHelper = require('../common/images-helper');
+        if(!!profile.profileImage && !!profile.profileImage.public_id
+            && profile.profileImage.public_id !== user.profileImage.public_id){
+
+            imageHelper.imageExists(profile.profileImage.public_id)
+                .then(function (exists) {
+                    if (exists) {
+                        user.profileImage = profile.profileImage;
+                        return imageHelper.setImageAsValid(profile.profileImage.public_id);
+                    }
+
+                    return exists;
+                })
+                .then(function () {
+                    setProfileImage.resolve();
+                })
+        } else {
+            user.profileImage = {};
+            user.profileImage.url = imageHelper.getGenericImage()
+                .finally(function () {
+                    setProfileImage.resolve();
+                });
+        }
+
+        setProfileImage.promise.then(function () {
+            user.save(function (err) {
+                if(err){
+                    return next(err);
+                }
+
+                return res.status(200).send(user);
+            });
         });
+
+
     });
 };
 
