@@ -1,7 +1,7 @@
 ﻿var debug = require('debug')('app:ctrl:auth')
 var jwt = require('jwt-simple');
 var mongoose = require('mongoose');
-var passport = require('passport');
+var imageHelper = require('../common/images-helper');
 require('../model');
 var User = mongoose.model('User');
 var q = require('q');
@@ -19,15 +19,21 @@ ctrl.login = function (req, res) {
 ctrl.register = function (req, res, next) {
     debug(req.body);
     var newUser = new User(req.body);
-    newUser.save(function (err) {
-        if (err) {
-            return next(err);
-        }
-        debug('user saved');
+    imageHelper.getGenericImage()
+        .then(function (genericImage) {
+            newUser.profileImage = genericImage;
 
-        res.status(200);
-        res.end();
-    });
+            newUser.save(function (err) {
+                if (err) {
+                    return next(err);
+                }
+                debug('user saved');
+
+                res.status(200);
+                res.end();
+            });
+        });
+
 };
 ctrl.me = function (req, res) {
     res.status(200).send(req.user);

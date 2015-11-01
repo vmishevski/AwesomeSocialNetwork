@@ -11,7 +11,7 @@ mockgoose(mongoose);
 chai.use(sinonChai);
 
 describe('ctrl:authorization-controller', function (){
-    var req, res, next, User, statusCode, sandbox;
+    var req, res, next, User, statusCode, sandbox, imageHelper, q;
 
     beforeEach(function () {
        sandbox = sinon.sandbox.create();
@@ -38,6 +38,12 @@ describe('ctrl:authorization-controller', function (){
         next = sinon.stub();
         User = mongoose.model('User');
         statusCode = undefined;
+        imageHelper = require('../../../server/common/images-helper');
+        q = require('q');
+        var genericImage = {public_id: 'genericImage'};
+        sandbox.stub(imageHelper, 'getGenericImage').returns(q.resolve(genericImage));
+        sandbox.stub(imageHelper, 'setImageAsValid').returns(q.resolve());
+        sandbox.stub(imageHelper, 'imageExists').returns(q.resolve(true));
     });
 
     it('me:should return logged user', function () {
@@ -276,11 +282,9 @@ describe('ctrl:authorization-controller', function (){
     });
 
     describe('saveProfile', function () {
-        var sandbox, err = {}, user = {}, imageHelper, q;
+        var sandbox, err = {}, user = {}, imageHelper;
 
         beforeEach(function () {
-            imageHelper = require('../../../server/common/images-helper');
-            q = require('q');
             sandbox = sinon.sandbox.create();
             req = {body: {fullName: 'new name', profileImage: {public_id: 'newpic'}}, user: {id: '123123' }};
             req.body.fullName = '123123';
@@ -290,9 +294,10 @@ describe('ctrl:authorization-controller', function (){
             sandbox.stub(res, 'status').returns(res);
             sandbox.stub(res, 'send');
             sandbox.stub(User, 'findOne').callsArgWith(1, undefined, user);
-            sandbox.stub(imageHelper, 'setImageAsValid');
-            sandbox.stub(imageHelper, 'imageExists');
-            sandbox.stub(imageHelper, 'getGenericImage');
+            imageHelper = require('../../../server/common/images-helper');
+            //sandbox.stub(imageHelper, 'setImageAsValid');
+            //sandbox.stub(imageHelper, 'imageExists');
+            //sandbox.stub(imageHelper, 'getGenericImage');
         });
 
         afterEach(function () {
