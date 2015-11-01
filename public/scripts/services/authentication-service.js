@@ -117,7 +117,7 @@ angular.module('awesomeSocialNetworkApp')
         return {
             'request': function (config) {
                 var token = $rootScope.token;
-                if (!!token) {
+                if (!!token && !config.file) {
                     config.headers.Authorization = 'JWT ' + token;
                 }
 

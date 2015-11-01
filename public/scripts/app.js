@@ -16,7 +16,8 @@ angular
         'ngResource',
         'ngSanitize',
         'ui.router',
-        'ngStorage'
+        'ngStorage',
+        'ngFileUpload'
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
 

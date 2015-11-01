@@ -11,6 +11,10 @@ var UserSchema = new Schema( {
         type: String,
         required: true
     },
+    profileImage:{
+        id: String,
+        url: String
+    },
     salt: { type: String, required: true },
     hashed_password: { type: String, required: true }
 });

@@ -102,6 +102,13 @@ ctrl.saveProfile = function (req, res, next) {
 
         var profile = req.body;
         user.fullName = profile.fullName;
+        var imageHelper = require('../common/images-helper');
+        if(!!profile.profileImage && profile.id && imageHelper.isValidImage('invalid')){
+            user.profileImage = profile.profileImage;
+        }else{
+            user.profileImage = {};
+            user.profileImage.url = imageHelper.getGenericUserImageUrl();
+        }
         user.save(function (err) {
             if(err){
                 return next(err);
