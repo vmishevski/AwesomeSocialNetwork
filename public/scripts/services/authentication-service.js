@@ -5,18 +5,21 @@ var routesUser = {
     me: 'api/user/me',
     register: 'api/user/register',
     changePassword: 'api/user/changePassword',
-    saveProfile: 'api/user/saveProfile'
+    saveProfile: 'api/user/saveProfile',
+    search: 'api/user/search'
 };
 
-var authEvents = {
+var events = {
     userUnauthorizedEvent: 'user-unauthorized-event',
     userNotAuthenticatedEvent: 'user-not-authenticated-event',
     userLoginEvent: 'user-login-event',
-    userLogoutEvent: 'user-logout-event'
+    userLogoutEvent: 'user-logout-event',
+    searchStart: 'search-start',
+    searchFinish: 'search-finish'
 };
 
 angular.module('awesomeSocialNetworkApp')
-    .value('authEvents', authEvents)
+    .value('events', events)
 
     .value('routesUser', routesUser)
 
@@ -113,7 +116,7 @@ angular.module('awesomeSocialNetworkApp')
         }
     }])
 
-    .service('tokenInjector', ['$rootScope', 'authEvents', '$q', function ($rootScope, authEvents, $q) {
+    .service('tokenInjector', ['$rootScope', 'events', '$q', function ($rootScope, authEvents, $q) {
         return {
             'request': function (config) {
                 var token = $rootScope.token;

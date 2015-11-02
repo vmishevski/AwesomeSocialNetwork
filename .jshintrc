@@ -14,9 +14,16 @@
   "jquery"        : false,
   "prototypejs"   : false,
 
-  "predef"        : [  // Custom globals.
-    "angular"
-  ],
+  "globals": {
+    "angular": false,
+    "inject": false,
+    "mock": true,
+    "describe": true,
+
+    "it": true,
+    "beforeEach": true,
+    "sinon": false
+  },
 
   // Development.
   "debug"         : false,  // Allow debugger statements e.g. browser breakpoints.
@@ -25,7 +32,7 @@
 
   // ECMAScript 5.
   "es5"           : true,   // Allow ECMAScript 5 syntax.
-  "strict"        : false,  // Require `use strict` pragma  in every file.
+  "strict"        : true,  // Require `use strict` pragma  in every file.
   "globalstrict"  : false,  // Allow global "use strict" (also enables 'strict').
 
 

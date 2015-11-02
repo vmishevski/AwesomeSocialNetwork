@@ -1,6 +1,7 @@
 /**
  * Created by Voislav on 10/10/2015.
  */
+'use strict';
 
 angular.module('awesomeSocialNetworkApp')
     .controller('LoginCtrl', ['$scope', 'AuthenticationService', '$state', function ($scope, AuthenticationService, $state) {
@@ -50,15 +51,15 @@ angular.module('awesomeSocialNetworkApp')
         self.user = angular.copy($rootScope.currentUser);
 
         self.days = [];
-        for(var d = 1; d <= 31; d++){
+        for (var d = 1; d <= 31; d++) {
             self.days.push(d);
         }
         self.months = [];
-        for(var m = 1; m <= 12; m++){
+        for (var m = 1; m <= 12; m++) {
             self.months.push(m);
         }
-        self.years =[];
-        for(var y = 2015; y >= 1900; y--){
+        self.years = [];
+        for (var y = 2015; y >= 1900; y--) {
             self.years.push(y);
         }
 
@@ -71,10 +72,10 @@ angular.module('awesomeSocialNetworkApp')
             month: undefined,
             year: undefined
         };
-        if(self.user.birthDay){
+        if (self.user.birthDay) {
             var date = new Date(self.user.birthDay);
             self.birthDay.day = date.getDay().toString();
-            self.birthDay.month = (date.getMonth() +1).toString();
+            self.birthDay.month = (date.getMonth() + 1).toString();
             self.birthDay.year = (date.getFullYear()).toString();
         }
 
@@ -151,5 +152,22 @@ angular.module('awesomeSocialNetworkApp')
                         }
                     }
                 });
+        };
+    }])
+    .controller('HeaderCtrl', ['AuthenticationService', 'UsersService', '$state', function (AuthenticationService, UsersService, $state) {
+        var self = this;
+
+        self.logout = function () {
+            AuthenticationService.logout();
+            $state.go('welcome');
+        };
+
+        self.searchValue = '';
+        var lastSearchValue = '';
+        self.search = function () {
+            if(self.searchValue.length > 0 && self.searchValue !== lastSearchValue){
+                lastSearchValue = self.searchValue;
+                UsersService.search(self.searchValue);
+            }
         };
     }]);

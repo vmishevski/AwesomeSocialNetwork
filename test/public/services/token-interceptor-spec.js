@@ -1,5 +1,5 @@
 describe('service:token-interceptor', function () {
-    "use strict";
+    'use strict';
 
     var $httpMock, $http, routesUser, authResponse, sandbox;
 

@@ -1,5 +1,5 @@
 <div class="navbar navbar-default">
-    <div class="container">
+    <div class="container" ng-controller="HeaderCtrl as vm">
         <div class="navbar-header offset">
             <a class="navbar-brand" href="#">ASN</a>
         </div>
@@ -9,7 +9,7 @@
             </div>
         </form>
         <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Logout</a></li>
+            <li><a href="javascript:void(0)" ng-click="vm.logout()">Logout</a></li>
         </ul>
     </div>
 </div>

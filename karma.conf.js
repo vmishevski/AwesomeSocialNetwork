@@ -24,6 +24,7 @@ module.exports = function (config) {
             'public/bower_components/angular-ui-router/release/angular-ui-router.js',
             'public/bower_components/ngstorage/ngStorage.min.js',
             'public/bower_components/ng-file-upload/ng-file-upload.js',
+            'public/bower_components/cloudinary_ng/js/angular.cloudinary.js',
             'public/scripts/app.js',
             'public/scripts/services/authentication-service.js',
             'public/scripts/**/*.js',
