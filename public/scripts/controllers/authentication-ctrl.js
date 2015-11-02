@@ -49,9 +49,34 @@ angular.module('awesomeSocialNetworkApp')
         var self = this;
         self.user = angular.copy($rootScope.currentUser);
 
+        self.days = [];
+        for(var d = 1; d <= 31; d++){
+            self.days.push(d);
+        }
+        self.months = [];
+        for(var m = 1; m <= 12; m++){
+            self.months.push(m);
+        }
+        self.years =[];
+        for(var y = 2015; y >= 1900; y--){
+            self.years.push(y);
+        }
+
+
         self.saveProfileError = [];
         self.saveProfileSuccess = false;
         self.file = '';
+        self.birthDay = {
+            day: undefined,
+            month: undefined,
+            year: undefined
+        };
+        if(self.user.birthDay){
+            var date = new Date(self.user.birthDay);
+            self.birthDay.day = date.getDay().toString();
+            self.birthDay.month = (date.getMonth() +1).toString();
+            self.birthDay.year = (date.getFullYear()).toString();
+        }
 
         self.saveProfile = function () {
             self.saveProfileError = [];
@@ -59,6 +84,8 @@ angular.module('awesomeSocialNetworkApp')
             if ($scope.profileForm.$invalid) {
                 return;
             }
+
+            self.user.birthDay = new Date(Date.UTC(self.birthDay.year, parseInt(self.birthDay.month), self.birthDay.day)).toISOString();
 
             AuthenticationService.saveProfile(self.user)
                 .then(function () {

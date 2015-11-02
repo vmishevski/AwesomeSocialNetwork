@@ -109,6 +109,7 @@ ctrl.saveProfile = function (req, res, next) {
 
         var profile = req.body;
         user.fullName = profile.fullName;
+        user.birthDay = new Date(profile.birthDay);
         var setProfileImage = q.defer();
 
         var setGenericImage = function () {

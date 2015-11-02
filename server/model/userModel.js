@@ -11,6 +11,7 @@ var UserSchema = new Schema( {
         type: String,
         required: true
     },
+    birthDay: Date,
     profileImage: {
         public_id: String,
         url: String
