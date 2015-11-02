@@ -74,7 +74,7 @@ angular.module('awesomeSocialNetworkApp')
         };
         if (self.user.birthDay) {
             var date = new Date(self.user.birthDay);
-            self.birthDay.day = date.getDay().toString();
+            self.birthDay.day = date.getDate().toString();
             self.birthDay.month = (date.getMonth() + 1).toString();
             self.birthDay.year = (date.getFullYear()).toString();
         }

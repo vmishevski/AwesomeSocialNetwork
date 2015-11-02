@@ -176,7 +176,8 @@ describe('ctrl:Profile', function () {
                 $valid: true,
                 $invalid: false
             }
-        };
+        },
+        $rootScope = {currentUser: {birthDay: new Date(2010, 10, 5)}};
 
     beforeEach(module('awesomeSocialNetworkApp', 'templates'));
 
@@ -196,7 +197,7 @@ describe('ctrl:Profile', function () {
     });
 
     it('should attach saveProfile func on scope', function () {
-        var ctrl = $controller('ProfileCtrl', {$scope: scope, AuthenticationService: authService});
+        var ctrl = $controller('ProfileCtrl', {$scope: scope, AuthenticationService: authService, $rootScope: $rootScope});
 
         expect(ctrl.saveProfile).to.be.defined;
         expect(angular.isFunction(ctrl.saveProfile)).to.be.true;
@@ -215,7 +216,7 @@ describe('ctrl:Profile', function () {
             scope.profileForm.$valid = false;
             scope.profileForm.$invalid = true;
             authService.saveProfile.returns($q.when());
-            var ctrl = $controller('ProfileCtrl', {$scope: scope, AuthenticationService: authService});
+            var ctrl = $controller('ProfileCtrl', {$scope: scope, AuthenticationService: authService, $rootScope: $rootScope});
 
             ctrl.saveProfile();
 
@@ -227,9 +228,13 @@ describe('ctrl:Profile', function () {
         inject(function ($q, $rootScope) {
             scope.profileForm.$valid = true;
             scope.profileForm.$invalid = false;
-            authService.saveProfile.returns($q.when());
-            var ctrl = $controller('ProfileCtrl', {$scope: scope, AuthenticationService: authService});
+            authService.saveProfile.returns($q.resolve());
+            $rootScope.currentUser = {};
+            var ctrl = $controller('ProfileCtrl', {$scope: scope, AuthenticationService: authService, $rootScope: $rootScope});
 
+            ctrl.birthDay.month = 10;
+            ctrl.birthDay.year = 2000;
+            ctrl.birthDay.day = 10;
             ctrl.saveProfile();
 
             $rootScope.$apply();
@@ -245,7 +250,12 @@ describe('ctrl:Profile', function () {
             scope.profileForm.$invalid = false;
             var errorResponse = {status: 400, data: ['error mesage']};
             authService.saveProfile.returns($q.reject(errorResponse));
-            var ctrl = $controller('ProfileCtrl', {$scope: scope, AuthenticationService: authService});
+            $rootScope.currentUser = {};
+            var ctrl = $controller('ProfileCtrl', {$scope: scope, AuthenticationService: authService, $rootScope: $rootScope});
+
+            ctrl.birthDay.month = 10;
+            ctrl.birthDay.year = 2000;
+            ctrl.birthDay.day = 10;
 
             ctrl.saveProfile();
 
@@ -257,6 +267,40 @@ describe('ctrl:Profile', function () {
             expect(ctrl.saveProfileError).to.eql(errorResponse.data);
         });
     });
+
+    it('should set currentUser birthday into birthDay::month birthDay::day and birthDay::year ', function () {
+        var ctrl = $controller('ProfileCtrl', {$scope: scope, AuthenticationService: authService, $rootScope: $rootScope});
+
+        expect(ctrl.birthDay).exist;
+        expect(ctrl.birthDay.year).to.equal('2010');
+        expect(ctrl.birthDay.month).to.equal('11');
+        expect(ctrl.birthDay.day).to.equal('5');
+    });
+
+    it('should set user.birthDay value corresponding to chosen values under vm.birthDay', function () {
+        inject(function ($q) {
+            scope.profileForm.$valid = true;
+            scope.profileForm.$invalid = false;
+            authService.saveProfile.returns($q.reject());
+            var ctrl = $controller('ProfileCtrl', {
+                $scope: scope,
+                AuthenticationService: authService,
+                $rootScope: $rootScope
+            });
+
+            ctrl.birthDay.month = 2;
+            ctrl.birthDay.year = 2000;
+            ctrl.birthDay.day = 20;
+
+            ctrl.saveProfile();
+
+            expect(authService.saveProfile).calledWith(sinon.match(function (val) {
+                return new Date(val.birthDay).getUTCFullYear() === ctrl.birthDay.year
+                    && new Date(val.birthDay).getUTCMonth() === ctrl.birthDay.month
+                    && new Date(val.birthDay).getUTCDate() === ctrl.birthDay.day;
+            }))
+        });
+    })
 });
 
 describe('ctrl:ChangePassword', function () {

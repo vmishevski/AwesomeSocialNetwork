@@ -4,10 +4,18 @@
 'use strict';
 
 describe('UsersService', function () {
-    var $httpBackend, routes, events, UsersService;
+    var $httpBackend, routes, events, UsersService, authService;
 
     beforeEach(angular.mock.module('awesomeSocialNetworkApp'));
     beforeEach(angular.mock.module('templates'));
+    beforeEach(module(function ($provide) {
+        authService = {
+            autoLogin: sinon.stub(),
+            isAuthenticated: sinon.stub(),
+            saveProfile: sinon.stub()
+        };
+        $provide.value('AuthenticationService', authService);
+    }));
 
     beforeEach(inject(function (_$httpBackend_, _routesUser_, _UsersService_, _events_) {
         $httpBackend = _$httpBackend_;
