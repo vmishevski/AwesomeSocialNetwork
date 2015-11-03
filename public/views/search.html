@@ -1,0 +1,12 @@
+<div ng-repeat="result in vm.results" class="media">
+    <div class="media-left">
+        <a href="javascript:void (0)">
+            <cl-image public-id="{{result.profileImage.public_id}}" class="media-object" >
+                <cl-transformation height="64" width="64" crop="fill" radius="20"/>
+            </cl-image>
+        </a>
+    </div>
+    <div class="media-body">
+        <div class="media-heading">{{result.fullName}}</div>
+    </div>
+</div>

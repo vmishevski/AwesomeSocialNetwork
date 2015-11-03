@@ -3,12 +3,13 @@
         <div class="navbar-header offset">
             <a class="navbar-brand" href="#">ASN</a>
         </div>
-        <form class="navbar-form navbar-left" role="search">
+        <form class="navbar-form navbar-left" role="search" ng-submit="vm.search()">
             <div class="form-group">
-                <input class="form-control" type="text" placeholder="Search people" id="search" />
+                <input ng-model="vm.searchValue" class="form-control" type="text" placeholder="Search people" id="search" />
             </div>
         </form>
         <ul class="nav navbar-nav navbar-right">
+            <li><a ui-sref="home.settings.profile">Settings</a></li>
             <li><a href="javascript:void(0)" ng-click="vm.logout()">Logout</a></li>
         </ul>
     </div>
@@ -16,5 +17,4 @@
 
 <div class="container">
     <div ui-view=""></div>
-    <a ui-sref="home.settings.profile">Settings</a>
 </div>

@@ -4,21 +4,23 @@
 'use strict';
 
 angular.module('awesomeSocialNetworkApp')
-    .service('UsersService', ['$http', 'routesUser', '$log', '$rootScope', 'events', function ($http, routesUser, $log, $rootScope, events) {
+    .service('UsersService', ['$http', 'routesUser', '$log', '$rootScope', 'events', '$state', function ($http, routesUser, $log, $rootScope, events, $state) {
         var self = this;
 
         self.search = function (valueToSearch) {
-            valueToSearch = encodeURIComponent(valueToSearch);
-            $log.log('searching with', valueToSearch);
+            $state.go('home.search', {q: valueToSearch}).then(function () {
+                valueToSearch = encodeURIComponent(valueToSearch);
+                $log.log('searching with', valueToSearch);
 
-            $rootScope.$broadcast(events.searchStart);
+                $rootScope.$broadcast(events.searchStart);
 
-            return $http.get(routesUser.search, {
-                params: {query: valueToSearch}
-            }).then(function (response) {
-                $log.log(response);
-                $rootScope.$broadcast(events.searchFinish, response.data);
-                return response.data;
+                return $http.get(routesUser.search, {
+                    params: {query: valueToSearch}
+                }).then(function (response) {
+                    $log.log(response);
+                    $rootScope.$broadcast(events.searchFinish, response.data);
+                    return response.data;
+                });
             });
         };
 

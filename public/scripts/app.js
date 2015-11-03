@@ -41,6 +41,10 @@ angular
             url: '/changePassword',
             templateUrl: 'views/changePassword.html',
             controller: 'ChangePasswordCtrl as vm'
+        }).state('home.search', {
+            url: '/search?q',
+            templateUrl: 'views/search.html',
+            controller: 'SearchCtrl as vm'
         });
 
         //$stateProvider.state('base', {

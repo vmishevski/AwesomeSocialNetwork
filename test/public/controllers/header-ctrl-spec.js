@@ -4,7 +4,7 @@
 'use strict';
 
 describe('HeaderCtrl', function () {
-    var $controller, ctrl, AuthenticationService, UsersService;
+    var $controller, ctrl, AuthenticationService, $state;
 
     beforeEach(angular.mock.module('awesomeSocialNetworkApp'));
     beforeEach(angular.mock.module('templates'));
@@ -14,13 +14,13 @@ describe('HeaderCtrl', function () {
         AuthenticationService = {
             logout: sinon.stub()
         };
-        UsersService = {
-            search: sinon.stub().returns($q.resolve())
+        $state = {
+            go: sinon.stub()
         };
     }));
 
     it('should attach search function and search value', function () {
-        ctrl = $controller('HeaderCtrl', {UsersService: UsersService, AuthenticationService: AuthenticationService});
+        ctrl = $controller('HeaderCtrl', {AuthenticationService: AuthenticationService});
 
         expect(ctrl.search).to.exist;
         expect(angular.isFunction(ctrl.search)).to.be.ok;
@@ -29,40 +29,27 @@ describe('HeaderCtrl', function () {
     });
 
     it('should attach logout function', function () {
-        ctrl = $controller('HeaderCtrl', {UsersService: UsersService, AuthenticationService: AuthenticationService});
+        ctrl = $controller('HeaderCtrl', {AuthenticationService: AuthenticationService});
 
         expect(ctrl.logout).to.exist;
         expect(angular.isFunction(ctrl.logout)).to.be.ok;
     });
 
     it('should call AuthenticationService::logout on logout', function () {
-        ctrl = $controller('HeaderCtrl', {UsersService: UsersService, AuthenticationService: AuthenticationService});
+        ctrl = $controller('HeaderCtrl', {AuthenticationService: AuthenticationService});
 
         ctrl.logout();
 
         expect(AuthenticationService.logout).called;
     });
 
-    it('should call UsersService::search on search with search value', function () {
-        ctrl = $controller('HeaderCtrl', {UsersService: UsersService, AuthenticationService: AuthenticationService});
+    it('should go to home.search state on search with search value', function () {
+        ctrl = $controller('HeaderCtrl', {AuthenticationService: AuthenticationService, $state: $state});
 
         var val = 'value';
         ctrl.searchValue = val;
         ctrl.search();
 
-        expect(UsersService.search).calledWith(val);
-    });
-
-    it('should not call UsersService::search multiple times with same value', function () {
-        ctrl = $controller('HeaderCtrl', {UsersService: UsersService, AuthenticationService: AuthenticationService});
-
-        var val = 'value';
-        ctrl.searchValue = val;
-        ctrl.search();
-        ctrl.search();
-        ctrl.search();
-        ctrl.search();
-
-        expect(UsersService.search).calledOnce;
+        expect($state.go).calledWith('home.search', {q: val});
     });
 });

@@ -4,7 +4,7 @@
 'use strict';
 
 angular.module('awesomeSocialNetworkApp')
-    .controller('SearchCtrl', ['UsersService', '$rootScope', 'events', function (UsersService, $rootScope, events) {
+    .controller('SearchCtrl', ['UsersService', '$rootScope', 'events', '$stateParams', function (UsersService, $rootScope, events, $stateParams) {
         var self = this;
 
         self.searching = false;
@@ -16,9 +16,13 @@ angular.module('awesomeSocialNetworkApp')
 
         self.results = [];
 
-        $rootScope.$on(events.searchFinish, function (results) {
+        $rootScope.$on(events.searchFinish, function (event, results) {
             angular.forEach(results, function (result) {
                 self.results.push(result)
             });
         });
+
+        if($stateParams.q){
+            UsersService.search($stateParams.q);
+        }
     }]);

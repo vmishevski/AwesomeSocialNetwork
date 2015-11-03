@@ -3,7 +3,7 @@
  */
 'use strict';
 
-describe.only('ctrl:search', function () {
+describe('ctrl:search', function () {
     var authService, UsersService, $rootScope, $controller, events;
 
     beforeEach(angular.mock.module('awesomeSocialNetworkApp'));
@@ -17,7 +17,8 @@ describe.only('ctrl:search', function () {
         $provide.value('AuthenticationService', authService);
 
         UsersService = {
-            getProfile: sinon.stub()
+            getProfile: sinon.stub(),
+            search: sinon.stub()
         };
         $provide.value('UsersService', UsersService);
 
@@ -62,7 +63,7 @@ describe.only('ctrl:search', function () {
 
     it('should set results with value provided on searchFinish', function () {
         var res = [{id: 'one'}, {id: 'two'}];
-        $rootScope.$on.callsArgWith(1, res);
+        $rootScope.$on.callsArgWith(1, 'event', res);
         var ctrl = $controller('SearchCtrl', {$rootScope: $rootScope, UsersService: UsersService});
 
         expect(ctrl.results).to.eql(res);
@@ -73,8 +74,15 @@ describe.only('ctrl:search', function () {
         var ctrl = $controller('SearchCtrl', {$rootScope: $rootScope, UsersService: UsersService});
 
         $rootScope.$on.withArgs(events.searchStart).callArg(1);
-        $rootScope.$on.withArgs(events.searchFinish).callArg(1, res);
+        $rootScope.$on.withArgs(events.searchFinish).callArg(1, 'event', res);
         $rootScope.$on.withArgs(events.searchStart).callArg(1);
         expect(ctrl.results).to.be.empty;
+    });
+
+    it('should call UserService::search when q param provided', function () {
+        var stateParams = {q: 'val'};
+        var ctrl = $controller('SearchCtrl', {$rootScope: $rootScope, UsersService: UsersService, $stateParams: stateParams});
+
+        expect(UsersService.search).called;
     });
 });

@@ -17,11 +17,12 @@ describe('UsersService', function () {
         $provide.value('AuthenticationService', authService);
     }));
 
-    beforeEach(inject(function (_$httpBackend_, _routesUser_, _UsersService_, _events_) {
+    beforeEach(inject(function (_$httpBackend_, _routesUser_, _UsersService_, _events_, $state, $q) {
         $httpBackend = _$httpBackend_;
         routes = _routesUser_;
         UsersService = _UsersService_;
         events = _events_;
+        sinon.stub($state, 'go').returns($q.resolve());
     }));
 
     afterEach(function () {
@@ -50,6 +51,7 @@ describe('UsersService', function () {
             sinon.spy($rootScope, '$broadcast');
             UsersService.search(val);
 
+            $rootScope.$apply();
             expect($rootScope.$broadcast).calledWith(events.searchStart);
 
             $httpBackend.flush();

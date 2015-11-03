@@ -163,11 +163,8 @@ angular.module('awesomeSocialNetworkApp')
         };
 
         self.searchValue = '';
-        var lastSearchValue = '';
+
         self.search = function () {
-            if(self.searchValue.length > 0 && self.searchValue !== lastSearchValue){
-                lastSearchValue = self.searchValue;
-                UsersService.search(self.searchValue);
-            }
+            $state.go('home.search', {q: self.searchValue});
         };
     }]);
