@@ -301,6 +301,113 @@ describe('ctrl:Profile', function () {
             }))
         });
     })
+
+    it('should call Upload service on uploadFile with provided file data', function () {
+        var res = {
+            progress: sinon.stub(),
+            success: sinon.stub(),
+            error: sinon.stub()
+        };
+
+        res.progress.returns(res);
+        res.success.returns(res);
+        res.error.returns(res);
+
+        var Upload = {
+
+            upload: sinon.stub().returns(res)
+        };
+
+        window.$ = {cloudinary:{config: function () {
+            return {upload_preset: ''}
+        }}};
+
+        var ctrl = $controller('ProfileCtrl', {$scope: scope, AuthenticationService: authService, Upload: Upload, $rootScope: $rootScope});
+
+        expect(ctrl.uploadProgress).to.equal(0);
+        var file = {data: 'custom file data here'};
+        ctrl.uploadFile(file);
+
+        expect(Upload.upload).calledWith(sinon.match({file: file}));
+        expect(res.progress).called;
+        expect(res.success).called;
+        expect(res.error).called;
+    });
+
+    it('should set uploadProgress based on loaded and total properties on progress event', function () {
+        var res = {
+            progress: sinon.stub(),
+            success: sinon.stub(),
+            error: sinon.stub()
+        };
+
+        res.progress.returns(res);
+        res.success.returns(res);
+        res.error.returns(res);
+
+        var Upload = {
+
+            upload: sinon.stub().returns(res)
+        };
+
+        window.$ = {cloudinary:{config: function () {
+            return {upload_preset: ''}
+        }}};
+
+        var ctrl = $controller('ProfileCtrl', {$scope: scope, AuthenticationService: authService, Upload: Upload, $rootScope: $rootScope});
+
+        expect(ctrl.uploadProgress).to.equal(0);
+        var file = {data: 'custom file data here'};
+        ctrl.uploadFile(file);
+
+        var event = {loaded: 40, total: 100};
+        res.progress.callArgWith(0, event);
+
+        expect(ctrl.uploading).to.be.true;
+        expect(ctrl.uploadProgress).to.equal(40);
+        event.loaded = 60;
+        res.progress.callArgWith(0, event);
+        expect(ctrl.uploadProgress).to.equal(60);
+    });
+
+    it('should set uploading flag only during uploading', function () {
+        var res = {
+            progress: sinon.stub(),
+            success: sinon.stub(),
+            error: sinon.stub()
+        };
+
+        res.progress.returns(res);
+        res.success.returns(res);
+        res.error.returns(res);
+
+        var Upload = {
+
+            upload: sinon.stub().returns(res)
+        };
+
+        window.$ = {cloudinary:{config: function () {
+            return {upload_preset: ''}
+        }}};
+
+        var ctrl = $controller('ProfileCtrl', {$scope: scope, AuthenticationService: authService, Upload: Upload, $rootScope: $rootScope});
+
+        expect(ctrl.uploadProgress).to.equal(0);
+        var file = {data: 'custom file data here'};
+        ctrl.uploadFile(file);
+
+        var event = {loaded: 40, total: 100};
+        res.progress.callArgWith(0, event);
+        expect(ctrl.uploading).to.be.true;
+        res.success.callArgWith(0,{}, 200);
+        expect(ctrl.uploading).to.be.false;
+
+        ctrl.uploadFile(file);
+        res.progress.callArgWith(0, event);
+        expect(ctrl.uploading).to.be.true;
+        res.error.callArgWith(0, {});
+        expect(ctrl.uploading).to.be.false;
+    });
 });
 
 describe('ctrl:ChangePassword', function () {

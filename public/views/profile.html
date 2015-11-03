@@ -55,7 +55,13 @@
                      ngf-select="vm.uploadFile($file)"
                      ng-model="file"
                      ngf-max-size="20MB">
-                    <button class="btn btn-default">Select profile image</button>
+                        <button class="btn btn-default">Select profile image</button>
+                    <div class="progress" ng-show="vm.uploading">
+                        <div class="progress-bar progress-bar-striped active" role="progressbar"
+                             aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" ng-style="{ width : vm.uploadProgress+'%'}">
+                            <span>{{vm.uploadProgress}}</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

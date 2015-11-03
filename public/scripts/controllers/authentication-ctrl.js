@@ -46,7 +46,7 @@ angular.module('awesomeSocialNetworkApp')
         };
     }])
 
-    .controller('ProfileCtrl', ['$rootScope', 'AuthenticationService', '$scope', 'Upload', function ($rootScope, AuthenticationService, $scope, Upload) {
+    .controller('ProfileCtrl', ['$rootScope', 'AuthenticationService', '$scope', 'Upload', '$log', function ($rootScope, AuthenticationService, $scope, Upload, $log) {
         var self = this;
         self.user = angular.copy($rootScope.currentUser);
 
@@ -103,7 +103,15 @@ angular.module('awesomeSocialNetworkApp')
                 });
         };
 
+        self.uploading = false;
+        self.uploadProgress = 0;
+
         self.uploadFile = function (file) {
+            if(!file){
+                return;
+            }
+
+            self.uploading = true;
             Upload.upload({
                 url: 'https://api.cloudinary.com/v1_1/' + $.cloudinary.config().cloud_name + '/upload',
                 file: file,
@@ -111,12 +119,18 @@ angular.module('awesomeSocialNetworkApp')
                     upload_preset: $.cloudinary.config().upload_preset
                 }
             }).progress(function (e) {
-                file.progress = Math.round((e.loaded * 100.0) / e.total);
-                file.status = "Uploading... " + file.progress + "%";
+                self.uploadProgress = Math.round((e.loaded * 100.0) / e.total);
+                $log.log(e, self.uploadProgress);
             }).success(function (data, status, headers, config) {
+                if(status !== 200){
+                    return;
+                }
                 self.user.profileImage = data;
-            }).error(function (data, status, headers, config) {
-                file.result = data;
+                self.uploading = false;
+                self.uploadProgress = 0;
+            }).error(function (data, status, headers, config)    {
+                self.uploading = false;
+                self.uploadProgress = 0;
             });
         };
     }])
