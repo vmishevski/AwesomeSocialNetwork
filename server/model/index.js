@@ -1,4 +1,6 @@
 ﻿require('./userModel.js');
+require('./friendshipRequestStatus');
+require('./timelineModel');
 var mongoose = require('mongoose'),
     debug = require('debug')('app:db'),
     config = require('config');
