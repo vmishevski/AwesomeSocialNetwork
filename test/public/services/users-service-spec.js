@@ -97,5 +97,15 @@ describe('service:UsersService', function () {
         $httpBackend.verifyNoOutstandingRequest();
     });
 
-    it('respondToFriendRequest: should make http request ')
+    it('getMyTimeline: should make http request to routes:myTimeline and return data from that', function () {
+        var requests = [{id:'some-user'}, {id: 'another-user'}];
+
+        $httpBackend.expectGET(routes.myTimeline).respond(200, {pendingFriendshipRequests: requests});
+
+        var res = UsersService.getMyTimeline();
+
+        $httpBackend.flush();
+
+        expect(res).to.eventually.equal(requests);
+    });
 });

@@ -4,7 +4,7 @@
 'use strict';
 
 angular.module('awesomeSocialNetworkApp')
-    .service('UsersService', ['$http', 'routesUser', '$log', '$rootScope', 'events', '$state', '$q', function ($http, routesUser, $log, $rootScope, events, $state, $q) {
+    .service('UsersService', ['$http', 'routesUser', '$log', '$rootScope', 'events', '$state', '$q', function ($http, routes, $log, $rootScope, events, $state, $q) {
         var self = this;
 
         self.search = function (valueToSearch) {
@@ -14,7 +14,7 @@ angular.module('awesomeSocialNetworkApp')
 
                 $rootScope.$broadcast(events.searchStart);
 
-                return $http.get(routesUser.search, {
+                return $http.get(routes.search, {
                     params: {query: valueToSearch}
                 }).then(function (response) {
                     $log.log(response);
@@ -33,6 +33,14 @@ angular.module('awesomeSocialNetworkApp')
             if(user.hasPendingRequest){
                 return $q.resolve();
             }
-            return $http.post(routesUser.addFriend, {userId: user.id});
+            return $http.post(routes.addFriend, {userId: user.id});
+        };
+
+        self.getMyTimeline = function () {
+            $log.log('getMyTimeline');
+            return $http.get(routes.myTimeline)
+                .then(function (response) {
+                    return response.data;
+                });
         }
     }]);

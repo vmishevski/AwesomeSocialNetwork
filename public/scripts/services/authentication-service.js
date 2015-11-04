@@ -7,7 +7,8 @@ var routesUser = {
     changePassword: 'api/user/changePassword',
     saveProfile: 'api/user/saveProfile',
     search: 'api/user/search',
-    addFriend: 'api/user/addFriend'
+    addFriend: 'api/user/addFriend',
+    myTimeline: 'api/user/timeline'
 };
 
 var events = {
