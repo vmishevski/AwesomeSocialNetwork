@@ -124,4 +124,25 @@ ctrl.respondToFriendRequest = function (req, res, next) {
     })
 };
 
+ctrl.myTimeline = function (req, res, next) {
+    Timeline.findOne({userId: req.user.id}, function (err, timeline) {
+        if(err)
+            return next(err);
+
+        if(!timeline)
+        {
+            timeline = new Timeline({userId: req.user.id});
+        }
+
+
+        timeline.pendingFriendshipRequests = [];
+        timeline.pendingFriendshipRequests = _.find(timeline.friendshipRequests, function (item) {
+            return item.status == friendRequestStatus.pending;
+        });
+
+        return res.status(200).send(timeline);
+
+    });
+};
+
 module.exports = ctrl;

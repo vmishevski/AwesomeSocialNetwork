@@ -223,4 +223,19 @@ describe('ctrl:user', function () {
         expect(base.res.status).calledWith(200);
         expect(request.status).to.equal(status.rejected);
     });
+
+    it('myTimeline: should find timeline for current user', function () {
+        base.req.user = {id: 'my-id'};
+        ctrl.myTimeline(base.req, base.res, base.next);
+        expect(Timeline.findOne).calledWith({userId: base.req.user.id});
+    });
+
+    it('myTimeline: should return empty friends list and empty requests list when no timeline found', function () {
+        base.req.user = {id: '5636967fbe5f17d41c3c804b'};
+        Timeline.findOne.callsArgWith(1, undefined, undefined);
+        ctrl.myTimeline(base.req, base.res, base.next);
+        expect(base.res.status).calledWith(200);
+        //TODO finish this
+        //expect(base.res.send).calledWith(sinon.match({friends: sinon.match.array, pendingFriendshipRequests: sinon.match.array}));
+    });
 });
