@@ -25,4 +25,11 @@ angular.module('awesomeSocialNetworkApp')
         if($stateParams.q){
             UsersService.search($stateParams.q);
         }
+        
+        self.addFriend = function (user) {
+            UsersService.addFriend(user)
+                .then(function () {
+                     user.hasPendingRequest = true;
+                });
+        }
     }]);

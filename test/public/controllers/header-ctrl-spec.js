@@ -3,7 +3,7 @@
  */
 'use strict';
 
-describe('HeaderCtrl', function () {
+describe('ctrl:HeaderCtrl', function () {
     var $controller, ctrl, AuthenticationService, $state;
 
     beforeEach(angular.mock.module('awesomeSocialNetworkApp'));

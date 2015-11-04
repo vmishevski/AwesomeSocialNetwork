@@ -4,7 +4,7 @@
 'use strict';
 
 describe('ctrl:search', function () {
-    var authService, UsersService, $rootScope, $controller, events;
+    var authService, UsersService, $rootScope, $controller, events, $q;
 
     beforeEach(angular.mock.module('awesomeSocialNetworkApp'));
     beforeEach(angular.mock.module('templates'));
@@ -18,7 +18,8 @@ describe('ctrl:search', function () {
 
         UsersService = {
             getProfile: sinon.stub(),
-            search: sinon.stub()
+            search: sinon.stub(),
+            addFriend: sinon.stub()
         };
         $provide.value('UsersService', UsersService);
 
@@ -27,9 +28,10 @@ describe('ctrl:search', function () {
         };
     }));
 
-    beforeEach(inject(function (_events_, _$controller_) {
+    beforeEach(inject(function (_events_, _$controller_, _$q_) {
         events = _events_;
         $controller = _$controller_;
+        $q = _$q_;
     }));
 
     it('should wait for events:searchStart and events:searchFinish on rootScope', function () {
@@ -84,5 +86,25 @@ describe('ctrl:search', function () {
         var ctrl = $controller('SearchCtrl', {$rootScope: $rootScope, UsersService: UsersService, $stateParams: stateParams});
 
         expect(UsersService.search).called;
+    });
+
+    it('should expose addFriend function', function () {
+        var ctrl = $controller('SearchCtrl', {$rootScope: $rootScope, UsersService: UsersService});
+
+        expect(ctrl.addFriend).to.exist;
+    });
+
+    it('should call UsersService:addFriend on addFriend with the userId argument', function () {
+        inject(function ($rootScope) {
+            UsersService.addFriend.returns($q.resolve());
+            var ctrl = $controller('SearchCtrl', {$rootScope: $rootScope, UsersService: UsersService});
+
+            var user = {id: 'some-id'};
+            ctrl.addFriend(user);
+            $rootScope.$apply();
+            expect(UsersService.addFriend).calledWith(user);
+
+            expect(user.hasPendingRequest).to.be.true;
+        });
     });
 });

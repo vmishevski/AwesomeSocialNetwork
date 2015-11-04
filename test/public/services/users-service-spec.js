@@ -3,7 +3,7 @@
  */
 'use strict';
 
-describe('UsersService', function () {
+describe('service:UsersService', function () {
     var $httpBackend, routes, events, UsersService, authService;
 
     beforeEach(angular.mock.module('awesomeSocialNetworkApp'));
@@ -72,4 +72,30 @@ describe('UsersService', function () {
 
         $httpBackend.verifyNoOutstandingExpectation();
     });
+
+    it('addFriend: should expose addFriend function', function () {
+        expect(UsersService.addFriend).to.exist;
+        expect(angular.isFunction(UsersService.addFriend)).to.be.true;
+    });
+
+    it('addFriend: should make http request to routes.addFriend with userId in body', function () {
+        var user = {id: 'some-id'};
+        $httpBackend.expectPOST(routes.addFriend, {userId: user.id}).respond(200, {});
+
+        UsersService.addFriend(user);
+
+        $httpBackend.flush();
+        $httpBackend.verifyNoOutstandingExpectation();
+    });
+
+    it('addFriend: should not make any http requests if hasPendingRequest of user is set to true', function () {
+        var user = {id: 'some-id', hasPendingRequest: true};
+
+        UsersService.addFriend(user);
+
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
+    });
+
+    it('respondToFriendRequest: should make http request ')
 });

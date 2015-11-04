@@ -6,7 +6,8 @@ var routesUser = {
     register: 'api/user/register',
     changePassword: 'api/user/changePassword',
     saveProfile: 'api/user/saveProfile',
-    search: 'api/user/search'
+    search: 'api/user/search',
+    addFriend: 'api/user/addFriend'
 };
 
 var events = {

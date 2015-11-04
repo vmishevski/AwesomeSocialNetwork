@@ -200,7 +200,7 @@ describe('service:authenticationService', function () {
     });
 });
 
-describe('usernameUnique', function () {
+describe('directive:usernameUnique', function () {
     beforeEach(angular.mock.module('awesomeSocialNetworkApp', 'templates'));
 
     var $httpMock, scope, elem;

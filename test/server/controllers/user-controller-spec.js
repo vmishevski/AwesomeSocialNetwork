@@ -15,7 +15,7 @@ mockgoose(mongoose);
 
 chai.use(sinonChai);
 
-describe.only('ctrl:user', function () {
+describe('ctrl:user', function () {
     var sandbox, base, User, err, query, Timeline;
 
     beforeEach(function () {
