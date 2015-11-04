@@ -13,10 +13,10 @@ var TimelineSchema = new Schema({
             status: {type: Number, min: 1, max: 3, default: 1}
         }
     ],
-    friends: {
+    friends: [{
         userId: {type: Schema.Types.ObjectId, required: true},
         dateBecomeFriends: {type: Date, default: Date.now}
-    }
+    }]
 });
 
 mongoose.model('Timeline', TimelineSchema);

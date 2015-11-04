@@ -1,12 +1,16 @@
-<div ng-repeat="result in vm.results" class="media">
+<div ng-repeat="result in vm.results" class="media well">
     <div class="media-left">
         <a href="javascript:void (0)">
             <cl-image public-id="{{result.profileImage.public_id}}" class="media-object" >
-                <cl-transformation height="64" width="64" crop="fill" radius="20"/>
+                <cl-transformation height="64" width="64" crop="fill" />
             </cl-image>
         </a>
     </div>
     <div class="media-body">
-        <div class="media-heading">{{result.fullName}}</div>
+        <div class="media-heading">
+            <h4>{{result.fullName}}</h4>
+        </div>
+        <button ng-click="vm.addFriend(result)" ng-show="!result.hasPendingRequest || result.isFriend" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-plus"></i> Add as friend</button>
+        <button ng-show="result.hasPendingRequest" disabled class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-plus"></i> Friend request send</button>
     </div>
 </div>

@@ -58,6 +58,9 @@ module.exports = function (app) {
 
     var userCtrl = require('../controllers/user-controller');
     router.get('/search', passport.authenticate('jwt', {session:false}), userCtrl.search);
+
+    router.post('/addFriend', passport.authenticate('jwt', {session: false}), userCtrl.addFriend);
+
     router.post('/respondToFriendRequest', passport.authenticate('jwt', {session:false}), userCtrl.respondToFriendRequest);
 
     app.use('/api/user', router);
