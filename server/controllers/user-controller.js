@@ -7,7 +7,8 @@ var mongoose = require('mongoose'),
     User = mongoose.model('User'),
     Timeline = mongoose.model('Timeline'),
     friendRequestStatus = require('../model/friendshipRequestStatus'),
-    _ = require('underscore');
+    _ = require('underscore'),
+    validator = require('validator');
 
 var ctrl = {};
 
@@ -66,6 +67,61 @@ ctrl.addFriend = function (req, res, next) {
             });
         });
     });
+};
+
+ctrl.respondToFriendRequest = function (req, res, next) {
+    if(!req.body.userId){
+        return res.status(400).send('Missing userId field')
+    }
+
+    if(!validator.isBoolean(req.body.answer)){
+        return res.status(400).send('Missing answer field');
+    }
+
+    req.body.answer = validator.toBoolean(req.body.answer);
+
+    User.findOne({_id: req.body.userId}, function (err, toAccept) {
+        if(err)
+            return next(err);
+
+        if(!toAccept)
+            return res.status(404).send('User with id=' + req.body.userId + ' not found');
+
+        Timeline.findOne({
+            "friendshipRequests.userId": toAccept._id
+        }, function (err, timeline) {
+            if(err)
+                return next(err);
+
+            if(!timeline)
+                return res.status(404).send('No pending requests found');
+
+            var friendRequest;
+
+            for(var i =0; i< timeline.friendshipRequests.length; i++){
+                if(timeline.friendshipRequests[i].userId ===toAccept._id){
+                    friendRequest = timeline.friendshipRequests[i];
+                    break;
+                }
+            }
+
+            if(friendRequest.status === friendRequestStatus.pending){
+                if(req.body.answer){
+                    friendRequest.status = friendRequestStatus.accepted
+                    timeline.friends.push({userId: toAccept._id});
+                }else {
+                    friendRequest.status = friendRequestStatus.rejected;
+                }
+            }
+
+            timeline.save(function (err) {
+                if(err)
+                    return next(err);
+
+                return res.status(200).send('Success');
+            });
+        });
+    })
 };
 
 module.exports = ctrl;
