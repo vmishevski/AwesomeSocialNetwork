@@ -15,8 +15,8 @@ mockgoose(mongoose);
 
 chai.use(sinonChai);
 
-describe.only('ctrl:user', function () {
-    var sandbox, base, User, err, query, Timeline;
+describe('ctrl:user', function () {
+    var sandbox, base, User, err, query;
 
     beforeEach(function () {
         query = 'name to find';
@@ -211,5 +211,38 @@ describe.only('ctrl:user', function () {
 
         expect(base.res.status).calledWith(200);
         expect(request.status).to.equal(status.rejected);
+    });
+
+    it('myProfile: should return current logged user', function () {
+        var user = {id: mongoose.Types.ObjectId()};
+        base.req.user = user;
+        ctrl.myProfile(base.req, base.res, base.next);
+        expect(base.res.status).calledWith(200);
+        expect(base.res.send).calledWith(user);
+    });
+
+    it('profile: should validate body for userId', function () {
+        ctrl.profile(base.req, base.res, base.next);
+        expect(base.res.status).calledWith(400);
+        expect(base.res.send).called;
+    });
+
+    it('profile: should propagate find user error', function () {
+        base.req.body = {userId: mongoose.Types.ObjectId()};
+        User.findOne.callsArgWith(1, err);
+        ctrl.profile(base.req, base.res, base.next);
+        expect(base.next).calledWith(err);
+    });
+
+    it('profile: should find user by userId from body and return the user', function () {
+        base.req.body = {userId: mongoose.Types.ObjectId()};
+        var user = {id: base.req.body.userId};
+        User.findOne.callsArgWith(1, undefined, user);
+
+        ctrl.profile(base.req, base.res, base.next);
+
+        expect(base.res.status).calledWith(200);
+        expect(User.findOne).called;
+        expect(base.res.send).calledWith(user);
     });
 });

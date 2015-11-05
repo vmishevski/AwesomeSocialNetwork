@@ -113,22 +113,22 @@ ctrl.respondToFriendRequest = function (req, res, next) {
     })
 };
 
-ctrl.myTimeline = function (req, res, next) {
-    Timeline.findOne({userId: req.user.id}, function (err, timeline) {
+ctrl.myProfile = function (req, res) {
+    return res.status(200).send(req.user);
+};
+
+ctrl.profile = function (req, res, next) {
+    if(!req.body.userId)
+        return res.status(400).send('UserId is required field');
+
+    User.findOne({_id: req.body.userId}, function (err, user) {
         if(err)
             return next(err);
 
-        if(!timeline)
-        {
-            timeline = new Timeline({userId: req.user.id});
-        }
+        if(!user)
+            return res.status(404).send('User with id='+req.body.userId +' not found');
 
-        timeline.pendingFriendshipRequests = [];
-        timeline.pendingFriendshipRequests = _.find(timeline.friendshipRequests, function (item) {
-            return item.status == friendRequestStatus.pending;
-        });
-
-        return res.status(200).send(timeline);
+        return res.status(200).send(user);
     });
 };
 
