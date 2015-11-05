@@ -1,6 +1,7 @@
 ﻿var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt');
+var friendshipModels = require('./friendshipModels');
 
 var UserSchema = new Schema( {
     email: {
@@ -17,7 +18,9 @@ var UserSchema = new Schema( {
         url: String
     },
     salt: { type: String, required: true },
-    hashed_password: { type: String, required: true }
+    hashed_password: { type: String, required: true },
+    friends: [friendshipModels.FriendSchema],
+    friendshipRequests: [friendshipModels.FriendshipRequestSchema]
 });
 
 UserSchema.methods = {

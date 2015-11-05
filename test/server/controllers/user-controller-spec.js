@@ -15,7 +15,7 @@ mockgoose(mongoose);
 
 chai.use(sinonChai);
 
-describe('ctrl:user', function () {
+describe.only('ctrl:user', function () {
     var sandbox, base, User, err, query, Timeline;
 
     beforeEach(function () {
@@ -24,13 +24,11 @@ describe('ctrl:user', function () {
         base = {};
         helpers.setup(base, sandbox);
         User = mongoose.model('User');
-        Timeline = mongoose.model('Timeline');
         sandbox.stub(User, 'find');
         sandbox.stub(User, 'findOne');
-        sandbox.stub(Timeline, 'findOne');
         err = {};
         base.req.query = { query: query};
-        base.req.user = {id: 'logged user id'};
+        base.req.user = {id: 'logged user id', friends: [], friendshipRequests: []};
     });
 
     afterEach(function () {
@@ -86,12 +84,11 @@ describe('ctrl:user', function () {
     });
 
     it('addFriend: should find timeline for logged user and return error if user is already added', function () {
-        base.req.body.userId = 'some user';
-        var timeline = {friendshipRequests: [{
-            userId: 'some user'
-        }]};
-        User.findOne.callsArgWith(1, undefined, {_id: 'some user'});
-        Timeline.findOne.callsArgWith(1, undefined, timeline);
+        base.req.body.userId = mongoose.Types.ObjectId();
+        base.req.user.friendshipRequests = [{
+            userId: base.req.body.userId
+        }];
+        User.findOne.callsArgWith(1, undefined, {id: base.req.body.userId});
 
         ctrl.addFriend(base.req, base.res, base.next);
 
@@ -99,45 +96,34 @@ describe('ctrl:user', function () {
     });
 
     it('addFriend: should push new request to timeline, call save and return status 200', function () {
-        base.req.body.userId = 'some user';
-        var timeline = {friendshipRequests: []};
-        timeline.save = sinon.stub().callsArg(0);
-        User.findOne.callsArgWith(1, undefined, {_id: 'some user'});
-        Timeline.findOne.callsArgWith(1, undefined, timeline);
+        var toAddId = mongoose.Types.ObjectId();
+        base.req.body.userId = toAddId;
+        base.req.user.save = sandbox.stub().callsArg(0);
+        User.findOne.callsArgWith(1, undefined, {id: toAddId});
 
         ctrl.addFriend(base.req, base.res, base.next);
 
-        expect(timeline.friendshipRequests).not.empty;
-        expect(timeline.friendshipRequests[0].userId).to.equal('some user');
-        expect(timeline.save).called;
+        expect(base.req.user.friendshipRequests).not.empty;
+        expect(base.req.user.friendshipRequests[0].userId).to.equal(toAddId);
+        expect(base.req.user.save).called;
         expect(base.res.status).calledWith(200);
     });
 
     it('addFriend: should propagate find user error', function () {
-        base.req.body.userId = 'some user';
+        var toAddId = mongoose.Types.ObjectId();
+        base.req.body.userId = toAddId;
         User.findOne.callsArgWith(1, err);
-
-        ctrl.addFriend(base.req, base.res, base.next);
-
-        expect(base.next).calledWith(err);
-    });
-
-    it('addFriend: should push new request to timeline, call save and return status 200', function () {
-        base.req.body.userId = 'some user';
-        User.findOne.callsArgWith(1, undefined, {_id: 'some user'});
-        Timeline.findOne.callsArgWith(1, err);
-
+        base.req.user.save = sandbox.stub().callsArg(0);
         ctrl.addFriend(base.req, base.res, base.next);
 
         expect(base.next).calledWith(err);
     });
 
     it('addFriend: should propagate save error', function () {
-        base.req.body.userId = 'some user';
-        var timeline = {friendshipRequests: []};
-        timeline.save = sinon.stub().callsArgWith(0, err);
-        User.findOne.callsArgWith(1, undefined, {_id: 'some user'});
-        Timeline.findOne.callsArgWith(1, undefined, timeline);
+        var toAddId = mongoose.Types.ObjectId();
+        base.req.body.userId = toAddId;
+        base.req.user.save = sandbox.stub().callsArgWith(0, err);
+        User.findOne.callsArgWith(1, undefined, {id: toAddId});
 
         ctrl.addFriend(base.req, base.res, base.next);
 
@@ -168,26 +154,27 @@ describe('ctrl:user', function () {
     });
 
     it('respondToFriendRequest: should respond with 404 when no pending request for that user was found', function () {
-        base.req.body.userId = 'someid';
+        var requestUserId = mongoose.Types.ObjectId();
+        base.req.body.userId = requestUserId;
         base.req.body.answer = 'true';
-        var toAdd = {_id: 'someid'};
+        var toAdd = {id: requestUserId};
 
         User.findOne.callsArgWith(1, undefined, toAdd);
-        Timeline.findOne.callsArgWith(1);
         ctrl.respondToFriendRequest(base.req, base.res, base.next);
 
         expect(base.res.status).calledWith(404);
     });
 
     it('respondToFriendRequest: should set accepted on request when answer is true', function () {
-        base.req.body.userId = 'someid';
+        var requestUserId = mongoose.Types.ObjectId();
+        base.req.body.userId = requestUserId;
         base.req.body.answer = 'true';
-        var toAdd = {_id: 'someid'};
-        var request = {userId:'someid', status: 1};
-        var timeline = {save:sandbox.stub().callsArg(0), friends:[], friendshipRequests:[request]};
-
+        var toAdd = {id: requestUserId};
+        var request = {userId: requestUserId, status: 1};
+        base.req.user.friendshipRequests = [request];
+        base.req.user.save = sandbox.stub().callsArg(0);
         User.findOne.callsArgWith(1, undefined, toAdd);
-        Timeline.findOne.callsArgWith(1, undefined, timeline);
+
         ctrl.respondToFriendRequest(base.req, base.res, base.next);
 
         expect(base.res.status).calledWith(200);
@@ -195,47 +182,34 @@ describe('ctrl:user', function () {
     });
 
     it('respondToFriendRequest: should add user to friends list when accepting request', function () {
-        base.req.body.userId = 'someid';
+        var requestUserId = mongoose.Types.ObjectId();
+        base.req.body.userId = requestUserId;
         base.req.body.answer = 'true';
-        var toAdd = {_id: 'someid'};
-        var request = {userId:'someid', status: 1};
-        var timeline = {save:sandbox.stub().callsArg(0), friends:[], friendshipRequests:[request]};
-
+        var toAdd = {id: requestUserId};
+        var request = {userId: requestUserId, status: 1};
+        base.req.user.friendshipRequests = [request];
+        base.req.user.save = sandbox.stub().callsArg(0);
         User.findOne.callsArgWith(1, undefined, toAdd);
-        Timeline.findOne.callsArgWith(1, undefined, timeline);
+
         ctrl.respondToFriendRequest(base.req, base.res, base.next);
 
         expect(base.res.status).calledWith(200);
-        expect(timeline.friends).to.include({userId:toAdd._id});
+        expect(base.req.user.friends).to.include({userId: toAdd.id});
     });
 
     it('respondToFriendRequest: should set rejected on request when answer is false', function () {
-        base.req.body.userId = 'someid';
+        var requestUserId = mongoose.Types.ObjectId();
+        base.req.body.userId = requestUserId;
         base.req.body.answer = 'false';
-        var toAdd = {_id: 'someid'};
-        var request = {userId:'someid', status: 1};
-        var timeline = {save:sandbox.stub().callsArg(0), friends:[], friendshipRequests:[request]};
-
+        var toAdd = {id: requestUserId};
+        var request = {userId: requestUserId, status: 1};
+        base.req.user.friendshipRequests = [request];
+        base.req.user.save = sandbox.stub().callsArg(0);
         User.findOne.callsArgWith(1, undefined, toAdd);
-        Timeline.findOne.callsArgWith(1, undefined, timeline);
+
         ctrl.respondToFriendRequest(base.req, base.res, base.next);
 
         expect(base.res.status).calledWith(200);
         expect(request.status).to.equal(status.rejected);
-    });
-
-    it('myTimeline: should find timeline for current user', function () {
-        base.req.user = {id: 'my-id'};
-        ctrl.myTimeline(base.req, base.res, base.next);
-        expect(Timeline.findOne).calledWith({userId: base.req.user.id});
-    });
-
-    it('myTimeline: should return empty friends list and empty requests list when no timeline found', function () {
-        base.req.user = {id: '5636967fbe5f17d41c3c804b'};
-        Timeline.findOne.callsArgWith(1, undefined, undefined);
-        ctrl.myTimeline(base.req, base.res, base.next);
-        expect(base.res.status).calledWith(200);
-        //TODO finish this
-        //expect(base.res.send).calledWith(sinon.match({friends: sinon.match.array, pendingFriendshipRequests: sinon.match.array}));
     });
 });
