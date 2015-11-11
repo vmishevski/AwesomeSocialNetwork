@@ -45,6 +45,16 @@ angular.module('awesomeSocialNetworkApp')
             return $http.post(routes.addFriend, {userId: user.id});
         };
 
+        self.acceptFriendRequest = function (userId) {
+            $log.log('acceptFriendRequest:', userId);
+            return $http.post(routes.respondFriendRequest, {userId: userId, answer: true});
+        };
+
+        self.rejectFriendRequest = function (userId) {
+            $log.log('rejectFriendRequest:', userId);
+            return $http.post(routes.respondFriendRequest, {userId: userId, answer: false});
+        };
+
         //self.getMyTimeline = function () {
         //    $log.log('getMyTimeline');
         //    return $http.get(routes.myTimeline)

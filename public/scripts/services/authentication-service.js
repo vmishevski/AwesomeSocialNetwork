@@ -8,6 +8,7 @@ var routesUser = {
     saveProfile: 'api/user/saveProfile',
     search: 'api/user/search',
     addFriend: 'api/user/addFriend',
+    respondFriendRequest: 'api/user/respondToFriendRequest',
     profile: 'api/user/profile'
 };
 

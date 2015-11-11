@@ -17,7 +17,9 @@ describe('ctrl: myTimeline', function () {
 
         UsersService = {
             getMyTimeline: sinon.stub(),
-            getProfile: sinon.stub()
+            getProfile: sinon.stub(),
+            acceptFriendRequest: sinon.stub(),
+            rejectFriendRequest: sinon.stub()
         };
         $provide.value('UsersService', UsersService);
     }));
@@ -50,5 +52,34 @@ describe('ctrl: myTimeline', function () {
         expect(ctrl.user.pendingFriendshipRequests).to.include(requests[1]);
         expect(ctrl.user.pendingFriendshipRequests.length).to.equal(2);
     });
+
+    it('shold expose accept and reject friend request functions', function () {
+        UsersService.getProfile.returns($q.resolve());
+        var ctrl = $controller('TimelineCtrl', {UsersService: UsersService, $scope: scope});
+
+        expect(ctrl.acceptFriendRequest).exist;
+        expect(angular.isFunction(ctrl.acceptFriendRequest)).to.be.true;
+    });
+
+    it('should call UserService:acceptFriendRequest', function () {
+        var request = {userId: 'some-id'};
+        UsersService.getProfile.returns($q.resolve());
+        var ctrl = $controller('TimelineCtrl', {UsersService: UsersService, $scope: scope});
+
+        ctrl.acceptFriendRequest(request);
+
+        expect(UsersService.acceptFriendRequest).calledWith(request.userId);
+    });
+
+    it('should call UserService:rejectFriendRequest', function () {
+        var request = {userId: 'some-id'};
+        UsersService.getProfile.returns($q.resolve());
+        var ctrl = $controller('TimelineCtrl', {UsersService: UsersService, $scope: scope});
+
+        ctrl.rejectFriendRequest(request);
+
+        expect(UsersService.rejectFriendRequest).calledWith(request.userId);
+    });
+
 
 });

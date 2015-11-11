@@ -98,7 +98,7 @@ ctrl.respondToFriendRequest = function (req, res, next) {
 
         if(friendRequest.status === friendRequestStatus.pending){
             if(req.body.answer){
-                friendRequest.status = friendRequestStatus.accepted
+                friendRequest.status = friendRequestStatus.accepted;
                 me.friends.push({userId: toAccept.id});
             }else {
                 friendRequest.status = friendRequestStatus.rejected;

@@ -11,11 +11,11 @@ angular.module('awesomeSocialNetworkApp')
         };
 
         self.acceptFriendRequest = function (request) {
-
+            UsersService.acceptFriendRequest(request.userId);
         };
 
         self.rejectFriendRequest = function (request) {
-
+            UsersService.rejectFriendRequest(request.userId);
         };
 
         self.user = {};

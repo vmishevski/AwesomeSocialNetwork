@@ -119,4 +119,23 @@ describe('service:UsersService', function () {
 
         $httpBackend.flush();
     });
+
+    it('acceptFriendRequest: should make request with userId and answer=true', function () {
+        var id = 'some-id';
+        $httpBackend.expectPOST(routes.respondFriendRequest, {userId: id, answer: true}).respond(200, {});
+
+        UsersService.acceptFriendRequest(id);
+
+        $httpBackend.flush();
+    });
+
+    it('rejectFriendRequest: should make request with userId and answer=false', function () {
+        var id = 'some-id';
+        $httpBackend.expectPOST(routes.respondFriendRequest, {userId: id, answer: false}).respond(200, {});
+
+        UsersService.rejectFriendRequest(id);
+
+        $httpBackend.flush();
+    });
+
 });
