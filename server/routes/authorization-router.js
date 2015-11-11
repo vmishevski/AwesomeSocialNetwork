@@ -63,5 +63,7 @@ module.exports = function (app) {
 
     router.post('/respondToFriendRequest', passport.authenticate('jwt', {session:false}), userCtrl.respondToFriendRequest);
 
+    router.get('/profile', passport.authenticate('jwt', {session:false}), userCtrl.profile);
+
     app.use('/api/user', router);
 };

@@ -7,7 +7,7 @@
         </a>
     </div>
     <div class="media-body">
-        <div class="media-heading">
+        <div ng-click="vm.openProfile(result)" class="media-heading">
             <h4>{{result.fullName}}</h4>
         </div>
         <button ng-click="vm.addFriend(result)" ng-show="!result.hasPendingRequest || result.isFriend" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-plus"></i> Add as friend</button>

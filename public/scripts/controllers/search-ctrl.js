@@ -4,7 +4,7 @@
 'use strict';
 
 angular.module('awesomeSocialNetworkApp')
-    .controller('SearchCtrl', ['UsersService', '$rootScope', 'events', '$stateParams', function (UsersService, $rootScope, events, $stateParams) {
+    .controller('SearchCtrl', ['UsersService', '$rootScope', 'events', '$stateParams', '$state', function (UsersService, $rootScope, events, $stateParams, $state) {
         var self = this;
 
         self.searching = false;
@@ -31,5 +31,9 @@ angular.module('awesomeSocialNetworkApp')
                 .then(function () {
                      user.hasPendingRequest = true;
                 });
+        };
+
+        self.openProfile = function (user) {
+            $state.go('home.timeline', {userId: user.id});
         }
     }]);

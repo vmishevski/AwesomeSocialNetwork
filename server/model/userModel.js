@@ -2,8 +2,10 @@
 var Schema = mongoose.Schema;
 var bcrypt = require('bcrypt');
 var friendshipModels = require('./friendshipModels');
+var friendshipStatus = require('./friendshipRequestStatus');
+var _ = require('underscore');
 
-var UserSchema = new Schema( {
+var UserSchema = new Schema({
     email: {
         type: String,
         required: true
@@ -17,8 +19,8 @@ var UserSchema = new Schema( {
         public_id: String,
         url: String
     },
-    salt: { type: String, required: true },
-    hashed_password: { type: String, required: true },
+    salt: {type: String, required: true},
+    hashed_password: {type: String, required: true},
     friends: [friendshipModels.FriendSchema],
     friendshipRequests: [friendshipModels.FriendshipRequestSchema]
 });
@@ -52,12 +54,18 @@ UserSchema.virtual('password').set(function (password) {
     return this._password;
 });
 
+UserSchema.virtual('pendingFriendshipRequests').get(function () {
+    return _.filter(this.friendshipRequests, function (item) {
+        return item.status === friendshipStatus.pending;
+    });
+});
+
 /**
  * Make sure that when adding new user, password is valid
  */
 UserSchema.pre('save', function (next) {
-    if(this.isNew){
-        if(!this.password || this.password.length < 6){
+    if (this.isNew) {
+        if (!this.password || this.password.length < 6) {
             return next(new Error('Invalid password'));
         }
     }
@@ -67,8 +75,8 @@ UserSchema.pre('save', function (next) {
 });
 
 /**
-  * adjust toJSON transformation
-  */ 
+ * adjust toJSON transformation
+ */
 UserSchema.options.toJSON = {
     transform: function (doc, ret, options) {
         ret.id = ret._id;
@@ -78,7 +86,8 @@ UserSchema.options.toJSON = {
         delete ret._id;
         delete ret.__v;
         return ret;
-    }
+    },
+    virtuals: true
 };
-    
+
 mongoose.model('User', UserSchema);

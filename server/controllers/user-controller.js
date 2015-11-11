@@ -47,7 +47,8 @@ ctrl.addFriend = function (req, res, next) {
         }
 
         me.friendshipRequests.push({
-            userId: toAddFriend.id
+            userId: toAddFriend.id,
+            fullName: toAddFriend.fullName
         });
 
         me.save(function (err) {
@@ -118,15 +119,17 @@ ctrl.myProfile = function (req, res) {
 };
 
 ctrl.profile = function (req, res, next) {
-    if(!req.body.userId)
+    if(!req.query.userId)
         return res.status(400).send('UserId is required field');
 
-    User.findOne({_id: req.body.userId}, function (err, user) {
+    User.findOne({_id: req.query.userId}, function (err, user) {
         if(err)
             return next(err);
 
         if(!user)
-            return res.status(404).send('User with id='+req.body.userId +' not found');
+            return res.status(404).send('User with id='+req.query.userId +' not found');
+
+
 
         return res.status(200).send(user);
     });

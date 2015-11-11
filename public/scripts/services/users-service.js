@@ -24,8 +24,17 @@ angular.module('awesomeSocialNetworkApp')
             });
         };
 
-        self.getProfile = function (userId) {
+        self.getProfile = function (id) {
+            $log.log('getProfile', id);
 
+            return $http.get(routes.profile, {params: {userId: id}})
+                .then(function (response) {
+                    var profile = response.data;
+                    if(profile.birthDay){
+                        profile.birthDay = new Date(profile.birthDay);
+                    }
+                    return profile;
+                });
         };
 
         self.addFriend = function (user) {

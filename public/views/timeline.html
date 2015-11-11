@@ -1,0 +1,47 @@
+<div class="page-header">
+    <h1>{{vm.user.fullName}}</h1>
+</div>
+<div class="col-md-6">
+    <div class="row well">
+        <div class="row">
+            <div class="col-sm-8 col-md-6 col-xs-6">
+                <div class="thumbnail">
+                    <cl-image public-id="{{vm.user.profileImage.public_id}}" height="122" width="166" crop="thumb">
+                    </cl-image>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <p ng-show="!!vm.user.birthDay">
+                <span>Born on {{vm.user.birthDay.toDateString()}}</span>
+            </p>
+        </div>
+    </div>
+
+    <div class="row well">
+        <div ng-show="vm.user.pendingFriendshipRequests.length > 0">
+            <p>Friend requests:</p>
+        </div>
+        <div ng-repeat="friendRequest in vm.user.pendingFriendshipRequests">
+            <span ng-click="vm.openProfile(friendRequest.userId)">{{friendRequest.fullName}}</span>
+            <button ng-click="vm.acceptFriendRequest(friendRequest)" class="btn btn-primary"><i
+                    class="glyphicon glyphicon-ok-sign"></i> Accept
+            </button>
+            <button ng-click="vm.rejectFriendRequest(friendRequest)" class="btn btn-default"><i
+                    class="glyphicon glyphicon-remove-sign"></i> Reject
+            </button>
+        </div>
+        <div ng-hide="vm.user.pendingFriendshipRequests.length > 0">
+            You don't have any pending friend requests
+        </div>
+    </div>
+    <div class="row well">
+        <div>
+            <div ng-repeat="friend in vm.user.friends">
+                <p ng-click="vm.openProfile(friend)">{{friend.id}}</p>
+                <hr />
+            </div>
+        </div>
+    </div>
+</div>
+<div class="col-md-6"></div>

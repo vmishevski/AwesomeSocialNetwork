@@ -45,6 +45,10 @@ angular
             url: '/search?q',
             templateUrl: 'views/search.html',
             controller: 'SearchCtrl as vm'
+        }).state('home.timeline',{
+            url: '/:userId',
+            templateUrl: 'views/timeline.html',
+            controller: 'TimelineCtrl as vm'
         });
 
         //$stateProvider.state('base', {
