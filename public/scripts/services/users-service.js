@@ -45,11 +45,11 @@ angular.module('awesomeSocialNetworkApp')
             return $http.post(routes.addFriend, {userId: user.id});
         };
 
-        self.getMyTimeline = function () {
-            $log.log('getMyTimeline');
-            return $http.get(routes.myTimeline)
-                .then(function (response) {
-                    return response.data;
-                });
-        }
+        //self.getMyTimeline = function () {
+        //    $log.log('getMyTimeline');
+        //    return $http.get(routes.myTimeline)
+        //        .then(function (response) {
+        //            return response.data;
+        //        });
+        //}
     }]);

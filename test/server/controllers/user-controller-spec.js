@@ -228,14 +228,14 @@ describe('ctrl:user', function () {
     });
 
     it('profile: should propagate find user error', function () {
-        base.req.body = {userId: mongoose.Types.ObjectId()};
+        base.req.query = {userId: mongoose.Types.ObjectId()};
         User.findOne.callsArgWith(1, err);
         ctrl.profile(base.req, base.res, base.next);
         expect(base.next).calledWith(err);
     });
 
     it('profile: should find user by userId from body and return the user', function () {
-        base.req.body = {userId: mongoose.Types.ObjectId()};
+        base.req.query = {userId: mongoose.Types.ObjectId()};
         var user = {id: base.req.body.userId};
         User.findOne.callsArgWith(1, undefined, user);
 

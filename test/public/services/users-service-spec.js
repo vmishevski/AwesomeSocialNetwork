@@ -97,15 +97,26 @@ describe('service:UsersService', function () {
         $httpBackend.verifyNoOutstandingRequest();
     });
 
-    it('getMyTimeline: should make http request to routes:myTimeline and return data from that', function () {
-        var requests = [{id:'some-user'}, {id: 'another-user'}];
+    it('getProfile: should make request to routes.profile to get the profile by id', function () {
+        var user = {id: 'some-id', hasPendingRequest: true};
 
-        $httpBackend.expectGET(routes.myTimeline).respond(200, {pendingFriendshipRequests: requests});
+        $httpBackend.expectGET(routes.profile+'?userId='+user.id).respond(200, {});
 
-        var res = UsersService.getMyTimeline();
+        UsersService.getProfile(user.id);
 
         $httpBackend.flush();
+    });
 
-        expect(res).to.eventually.equal(requests);
+    it('getProfile: should convert birthDay to date', function () {
+        var user = {id: 'some-id', birthDay: new Date().toISOString()};
+
+        $httpBackend.expectGET(routes.profile+'?userId='+user.id).respond(200, user);
+
+        expect(UsersService.getProfile(user.id)).to.eventually.be.fulfilled
+            .and.then(function (response) {
+                expect(response.birthDay).to.be.a('date');
+        });
+
+        $httpBackend.flush();
     });
 });
