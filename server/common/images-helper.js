@@ -12,7 +12,7 @@ module.exports = {
             .then(function (response) {
                 return response.resources[0]
             })
-            .fail(function (response) {
+            .catch(function (response) {
                 debug(response);
                 return undefined;
             });
@@ -25,7 +25,7 @@ module.exports = {
                 debug('image', imageId, res ? 'exists' : 'doesn\'t exist');
                 return res;
             })
-            .fail(function (response) {
+            .catch(function (response) {
                 debug(response);
                 return false;
             });

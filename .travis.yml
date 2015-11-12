@@ -3,6 +3,7 @@ node_js:
 - '0.12'
 services:
 - mongodb
+- redis-server
 cache:
   directories:
   - node_modules
@@ -27,3 +28,5 @@ deploy:
   app: awesome-social-network
   on:
     repo: vmishevski/AwesomeSocialNetwork
+env:
+- REDIS_URL=localhost

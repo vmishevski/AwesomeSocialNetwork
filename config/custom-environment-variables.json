@@ -1,4 +1,5 @@
 {
   "db": "MONGOLAB_URI",
-  "imageServer": "CLOUDINARY_URL"
+  "imageServer": "CLOUDINARY_URL",
+  "redisUrl": "REDIS_URL"
 }
