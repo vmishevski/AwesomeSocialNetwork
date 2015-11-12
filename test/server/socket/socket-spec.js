@@ -4,7 +4,7 @@
 var io = require('socket.io-client'),
     config = require('config');
 
-describe.only('socket', function () {
+describe('socket', function () {
     it('should connect to socket server', function (done) {
         var socket = io('http://localhost:' + config.socketPort);
 
