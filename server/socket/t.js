@@ -26,16 +26,16 @@ if(cluster.isMaster){
     // Compared against "real" hashing (from the sticky-session code) and
     // "real" IP number conversion, this function is on par in terms of
     // worker index distribution only much faster.
-    var worker_index = function(ip, len) {
-        var s = '';
-        for (var i = 0, _len = ip.length; i < _len; i++) {
-            if (ip[i] !== '.') {
-                s += ip[i];
-            }
-        }
-
-        return Number(s) % len;
-    };
+    //var worker_index = function(ip, len) {
+    //    var s = '';
+    //    for (var i = 0, _len = ip.length; i < _len; i++) {
+    //        if (ip[i] !== '.') {
+    //            s += ip[i];
+    //        }
+    //    }
+    //
+    //    return Number(s) % len;
+    //};
 
     var seed = (Math.random() * 0xffffffff) | 0;
 

@@ -5,7 +5,7 @@ var io = require('socket.io-client'),
     config = require('config');
 
 describe('socket', function () {
-    xit('should connect to socket server', function (done) {
+    it('should connect to socket server', function (done) {
         var socket = io('http://localhost:' + config.socketPort);
 
         socket.on('connect', function () {

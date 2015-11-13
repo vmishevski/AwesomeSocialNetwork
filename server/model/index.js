@@ -5,7 +5,7 @@ var mongoose = require('mongoose'),
     debug = require('debug')('app:db'),
     config = require('config');
 
-console.log(config);
+debug('connecting to mongodb on ', config.db);
 
 mongoose.connect(config.db, function (err) {
     if(err){

@@ -1,9 +1,24 @@
 ﻿#!/usr/bin/env node
 var debug = require('debug')('app:www');
-var app = require('../app');
+var cluster = require('cluster');
+var num_processes = require('os').cpus().length;
 
-app.set('port', process.env.PORT || 3000);
+if(cluster.isMaster){
+    var workers = [];
+    for(var i=0; i < num_processes; i++){
+        workers[i] = cluster.fork();
+    }
 
-var server = app.listen(app.get('port'), function() {
-    debug('Express server listening on port ' + server.address().port);
-});
+    var SocketMaster = require('../server/socket/master');
+    var master = new SocketMaster(workers);
+}else{
+    var app = require('../app');
+
+    app.set('port', process.env.PORT || 3000);
+
+    var server = app.listen(app.get('port'), function() {
+        debug('Express server listening on port ' + server.address().port);
+    });
+
+    require('../server/socket/worker')();
+}
