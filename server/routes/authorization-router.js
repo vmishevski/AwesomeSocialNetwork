@@ -7,11 +7,12 @@ var debug = require('debug')('app:authorization');
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var authorizationCtrl = require('../controllers/authorization-controller');
+var config = require('config');
 
 module.exports = function (app) {
     app.use(passport.initialize());
 
-    passport.use(new JwtStrategy({ secretOrKey: 'secret-key' }, function (payload, done) {
+    passport.use(new JwtStrategy({ secretOrKey: config.tokenSecret }, function (payload, done) {
         User.findOne({_id: payload.id}, function (err, user) {
             if(err){
                 return done(err);

@@ -5,11 +5,12 @@ var imageHelper = require('../common/images-helper');
 require('../model');
 var User = mongoose.model('User');
 var q = require('q');
+var config = require('config');
 
 var ctrl = {};
 
 var serializeUser = function (user) {
-    return jwt.encode(user, 'secret-key');
+    return jwt.encode(user, config.tokenSecret);
 };
 
 ctrl.login = function (req, res) {
