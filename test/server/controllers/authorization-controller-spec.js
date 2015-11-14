@@ -6,7 +6,7 @@ var mockgoose = require('mockgoose'),
     expect = chai.expect,
     sinonChai = require('sinon-chai');
 require('../../../server/model/index');
-mockgoose(mongoose);
+//mockgoose(mongoose);
 
 chai.use(sinonChai);
 

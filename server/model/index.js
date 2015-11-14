@@ -1,6 +1,6 @@
 ﻿require('./userModel.js');
 require('./friendshipRequestStatus');
-//require('./timelineModel');
+require('./chatRoomModel');
 var mongoose = require('mongoose'),
     debug = require('debug')('app:db'),
     config = require('config');

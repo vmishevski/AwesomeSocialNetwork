@@ -9,30 +9,28 @@ var socketIo = require('socket.io'),
     net = require('net'),
     ioRedis = require('socket.io-redis');
 
-var Worker = function () {
-    if(!cluster.isMaster){
-        debug('socket worker', process.env.NODE_UNIQUE_ID, 'starting');
-        var app = express();
-        var socketServer = app.listen(0, 'localhost');
-        var io = socketIo(socketServer);
+var io = undefined;
 
-        io.adapter(ioRedis({ host: config.redisUrl, port: 6379 }))
+if(!cluster.isMaster){
+    debug('socket worker', process.env.NODE_UNIQUE_ID, 'starting');
+    var app = express();
+    var socketServer = app.listen(0, 'localhost');
+    io = socketIo(socketServer);
 
-        // Listen to messages sent from the master. Ignore everything else.
-        process.on('message', function(message, connection) {
-            if (message !== 'sticky-session:connection') {
-                return;
-            }
+    io.adapter(ioRedis({ host: config.redisUrl, port: 6379 }));
 
-            // Emulate a connection event on the server by emitting the
-            // event with the connection the master sent us.
-            socketServer.emit('connection', connection);
+    // Listen to messages sent from the master. Ignore everything else.
+    process.on('message', function(message, connection) {
+        if (message !== 'sticky-session:connection') {
+            return;
+        }
 
-            connection.resume();
-        });
+        // Emulate a connection event on the server by emitting the
+        // event with the connection the master sent us.
+        socketServer.emit('connection', connection);
 
-        require('./socket')(io);
-    }
-};
+        connection.resume();
+    });
+}
 
-module.exports = Worker;
+exports.io = io;
