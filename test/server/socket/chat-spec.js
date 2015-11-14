@@ -40,10 +40,10 @@ describe('chat', function () {
             expect(room).defined;
             expect(ChatRoom.prototype.save).called;
             // should create new instance of ChatRoom add the two users as participants
-            expect(ChatRoom.prototype.save).calledOn(sinon.match.instanceOf(ChatRoom)
-                .and(sinon.match(function (val) {
-                    return val.participants.length == 2;
-                })));
+            expect(ChatRoom.prototype.save).calledOn(sinon.match.instanceOf(ChatRoom));
+            expect(ChatRoom.prototype.save).calledOn(room);
+            expect(room.participants).exist;
+            expect(room.participants.length).to.equal(2);
             done();
         });
     });
