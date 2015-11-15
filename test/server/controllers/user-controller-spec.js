@@ -11,7 +11,7 @@ var mockgoose = require('mockgoose'),
     sinonChai = require('sinon-chai'),
     helpers = require('../helpers');
 require('../../../server/model/index');
-//mockgoose(mongoose);
+mockgoose(mongoose);
 
 chai.use(sinonChai);
 
