@@ -3,17 +3,17 @@
  */
 'use strict';
 
-var mongoose = require('mongoose'),
-    chat = require('../../../server/socket/chat'),
-    ChatRoom = mongoose.model('ChatRoom'),
-    sinon = require('sinon'),
-    expect = require('chai').expect,
-    config = require('config'),
-    User = mongoose.model('User'),
-    jwt = require('jwt-simple'),
-    io = require('../../../server/socket/worker').io,
-    ioClient = require('socket.io-client'),
-    chatEvents = require('../../../server/socket/chatEvents');
+var mongoose = require('mongoose');
+var chat = require('../../../server/socket/chat');
+var ChatRoom = mongoose.model('ChatRoom');
+var sinon = require('sinon');
+var expect = require('chai').expect;
+var config = require('config');
+var User = mongoose.model('User');
+var jwt = require('jwt-simple');
+var io = require('../../../server/socket/worker').io;
+var ioClient = require('socket.io-client');
+var chatEvents = require('../../../server/socket/chatEvents');
 
 describe('chat', function () {
     var sandbox;
@@ -48,14 +48,14 @@ describe('chat', function () {
         });
     });
 
-    it('postMessage: should push the message in messages of the room specified by id', function (done) {
+    it('sendMessage: should push the message in messages of the room specified by id', function (done) {
         var room = new ChatRoom({});
         sandbox.spy(room.messages, 'push');
         var user = new User({fullName: 'voislav'});
         ChatRoom.findOne.callsArgWith(1, undefined, room);
         var message = 'my test message';
 
-        chat.postMessage(user, room.id, message, function (err) {
+        chat.sendMessage(user, room.id, message, function (err) {
             expect(err).not.defined;
             expect(room.messages.push).calledWith(sinon.match({
                 from: sinon.match({userId: user._id, fullName: user.fullName}),
@@ -84,7 +84,7 @@ describe('chat', function () {
         });
     });
 
-    it('postMessage: after user connects he should receive message on rooms he participates', function () {
+    it('sendMessage: after user connects he should receive message on rooms he participates', function () {
         var fromUser = new User({fullName: 'voislav'});
         var toUser = new User({fullName: 'test user'});
         var message = 'some test message';
@@ -102,7 +102,7 @@ describe('chat', function () {
 
             done();
         }).on('authenticated', function () {
-            chat.postMessage(fromUser, room.id, message, function (err) {
+            chat.sendMessage(fromUser, room.id, message, function (err) {
             });
         });
     });

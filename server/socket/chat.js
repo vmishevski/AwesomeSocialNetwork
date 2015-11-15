@@ -50,7 +50,7 @@ chat.findRoom = function (currentUser, user, callback) {
     });
 };
 
-chat.postMessage = function (user, roomId, message, callback) {
+chat.sendMessage = function (user, roomId, message, callback) {
     ChatRoom.findOne({_id: roomId}, function (err, chatRoom) {
         if(err)
             return callback(err);
@@ -81,7 +81,7 @@ chat.postMessage = function (user, roomId, message, callback) {
             if (err)
                 return callback(err);
 
-            return callback();
+            return callback(null, chatRoom);
         });
     });
 };

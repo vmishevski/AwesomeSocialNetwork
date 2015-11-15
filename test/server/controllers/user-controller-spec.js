@@ -4,16 +4,11 @@
 var ctrl = require('../../../server/controllers/user-controller');
 var status = require('../../../server/model/friendshipRequestStatus');
 var mongoose = require('mongoose');
-var mockgoose = require('mockgoose'),
-    sinon = require('sinon'),
-    chai = require('chai'),
-    expect = chai.expect,
-    sinonChai = require('sinon-chai'),
-    helpers = require('../helpers');
+var sinon = require('sinon');
+var chai = require('chai');
+var expect = chai.expect;
+var helpers = require('../helpers');
 require('../../../server/model/index');
-mockgoose(mongoose);
-
-chai.use(sinonChai);
 
 describe('ctrl:user', function () {
     var sandbox, base, User, err, query;

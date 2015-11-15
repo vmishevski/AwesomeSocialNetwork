@@ -1,14 +1,9 @@
 ﻿var ctrl = require('../../../server/controllers/authorization-controller');
 var mongoose = require('mongoose');
-var mockgoose = require('mockgoose'),
-    sinon = require('sinon'),
-    chai = require('chai'),
-    expect = chai.expect,
-    sinonChai = require('sinon-chai');
+var sinon = require('sinon');
+var chai = require('chai');
+var expect = chai.expect;
 require('../../../server/model/index');
-mockgoose(mongoose);
-
-chai.use(sinonChai);
 
 describe('ctrl:authorization-controller', function (){
     var req, res, next, User, statusCode, sandbox, imageHelper, q;
