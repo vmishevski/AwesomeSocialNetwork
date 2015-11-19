@@ -142,7 +142,7 @@ io.on('connection', jwtSocketIo.authorize({
     secret: config.tokenSecret,
     timeout: 15000
 })).on('authenticated', function (socket) {
-    debug('user connected and authenticated', socket.decoded_token);
+    debug('user connected and authenticated', socket.decoded_token.email);
     redisClient.set(socket.decoded_token.id, socket.id);
     socket.on('disconnect', function () {
         debug('user disconnected');

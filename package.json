@@ -48,6 +48,7 @@
     "coveralls": "^2.11.4",
     "gulp": "^3.9.0",
     "gulp-connect": "latest",
+    "gulp-inject": "^3.0.0",
     "gulp-livereload": "^3.8.1",
     "gulp-nodemon": "^2.0.4",
     "gulp-open": "latest",
@@ -63,6 +64,7 @@
     "karma-mocha": "^0.2.0",
     "karma-ng-html2js-preprocessor": "^0.2.0",
     "karma-sinon-chai": "^1.1.0",
+    "karma-wiredep": "^1.0.1",
     "lcov-result-merger": "^1.0.2",
     "mocha": "^2.3.3",
     "mocha-istanbul": "^0.2.0",
@@ -70,6 +72,7 @@
     "mockgoose": "^4.0.2",
     "protractor": "^2.5.1",
     "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0"
+    "sinon-chai": "^2.8.0",
+    "wiredep": "^2.2.2"
   }
 }

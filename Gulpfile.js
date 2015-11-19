@@ -6,6 +6,8 @@ var protractor = require('gulp-protractor').protractor;
 var webdriver_update = require('gulp-protractor').webdriver_update;
 var gulpNgConfig = require('gulp-ng-config');
 var config = require('config');
+var wiredep = require('wiredep').stream;
+var inject = require('gulp-inject')
 
 var watchLivereload = function () {
     gulp.watch(['public/**/*.*'], function (event) {
@@ -52,14 +54,14 @@ gulp.task('kill-spawn', function () {
 });
 
 var publicConfig = function (enviroment) {
-    return gulp.src('public/config/config.json')
+    return gulp.src('public/scripts/config/config.json')
         .pipe(gulpNgConfig('awesomeSocialNetworkApp.config', {
             environment: enviroment,
             constants: {
                 socketServerUrl: 'http://localhost:' + config.socketPort + '/'
             }
         }))
-        .pipe(gulp.dest('public/config/'));
+        .pipe(gulp.dest('public/scripts/config/'));
 };
 
 gulp.task('public-config:development', function () {
@@ -89,6 +91,26 @@ gulp.task('open', function () {
        }));
 });
 
-gulp.task('default', ['public-config:development', 'serve', 'open']);
+gulp.task('default', ['public-config:development', 'injectScripts', 'serve', 'open']);
 
 gulp.task('test:integration', ['protractor']);
+
+gulp.task('wiredep', function () {
+    gulp.src('public/index.html')
+        .pipe(wiredep({
+            cwd: 'public'
+        }))
+        .pipe(gulp.dest('./public'));
+});
+
+gulp.task('injectScripts', function () {
+    var target = gulp.src('public/index.html');
+
+    return target
+        .pipe(wiredep({
+            cwd: 'public',
+            exclude: ['blueimp*']
+        }))
+        .pipe(inject(gulp.src(['public/scripts/**/*.js'], {read: false}), {relative: true}))
+        .pipe(gulp.dest('./public'));
+});

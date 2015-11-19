@@ -9,22 +9,10 @@ module.exports = function (config) {
 
         // frameworks to use
         // available frameworks: https://npmjs.org/browse/keyword/karma-adapter
-        frameworks: ['mocha', 'chai-as-promised', 'sinon-chai'],
+        frameworks: ['wiredep', 'mocha', 'chai-as-promised', 'sinon-chai'],
 
         // list of files / patterns to load in the browser
         files: [
-            'public/bower_components/angular/angular.js',
-            'public/bower_components/angular-resource/angular-resource.js',
-            'public/bower_components/angular-cookies/angular-cookies.js',
-            'public/bower_components/angular-mocks/angular-mocks.js',
-            'public/bower_components/angular-animate/angular-animate.js',
-            'public/bower_components/angular-aria/angular-aria.js',
-            'public/bower_components/angular-sanitize/angular-sanitize.js',
-            'public/bower_components/angular-messages/angular-messages.js',
-            'public/bower_components/angular-ui-router/release/angular-ui-router.js',
-            'public/bower_components/ngstorage/ngStorage.min.js',
-            'public/bower_components/ng-file-upload/ng-file-upload.js',
-            'public/bower_components/cloudinary_ng/js/angular.cloudinary.js',
             'public/scripts/**/*.js',
             'test/public/helpers.js',
             'test/public/**/*spec.js',
@@ -82,6 +70,12 @@ module.exports = function (config) {
         ngHtml2JsPreprocessor: {
             stripPrefix: 'public/',
             moduleName: 'templates'
+        },
+
+        wiredep: {
+            cwd: 'public',
+            exclude: ['blueimp*'],
+            devDependencies: true
         },
 
         client: {
