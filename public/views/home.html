@@ -1,4 +1,4 @@
-<div class="navbar navbar-default">
+<div class="navbar navbar-default navbar-fixed-top">
     <div class="container" ng-controller="HeaderCtrl as vm">
         <div class="navbar-header offset">
             <a class="navbar-brand" href="#">ASN</a>
@@ -15,6 +15,20 @@
     </div>
 </div>
 
-<div class="container">
-    <div ui-view=""></div>
+<div id="wrapper">
+    <div id="sidebar-wrapper">
+        <div ui-view="chat"></div>
+    </div>
+    <div id="page-content-wrapper">
+        <div class="page-content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3>Home view</h3>
+                        <div  ui-view=""></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

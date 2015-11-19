@@ -9,7 +9,9 @@ var routesUser = {
     search: 'api/user/search',
     addFriend: 'api/user/addFriend',
     respondFriendRequest: 'api/user/respondToFriendRequest',
-    profile: 'api/user/profile'
+    profile: 'api/user/profile',
+    getConversation: 'api/chat/getConversation',
+    sendMessage: 'api/chat/sendMessage'
 };
 
 var events = {
@@ -18,7 +20,8 @@ var events = {
     userLoginEvent: 'user-login-event',
     userLogoutEvent: 'user-logout-event',
     searchStart: 'search-start',
-    searchFinish: 'search-finish'
+    searchFinish: 'search-finish',
+    newMessage: 'new-message'
 };
 
 angular.module('awesomeSocialNetworkApp')

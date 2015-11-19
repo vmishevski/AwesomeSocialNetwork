@@ -4,6 +4,8 @@ var nodemon = require('gulp-nodemon');
 var gulpOpen = require('gulp-open');
 var protractor = require('gulp-protractor').protractor;
 var webdriver_update = require('gulp-protractor').webdriver_update;
+var gulpNgConfig = require('gulp-ng-config');
+var config = require('config');
 
 var watchLivereload = function () {
     gulp.watch(['public/**/*.*'], function (event) {
@@ -49,6 +51,25 @@ gulp.task('kill-spawn', function () {
     }
 });
 
+var publicConfig = function (enviroment) {
+    return gulp.src('public/config/config.json')
+        .pipe(gulpNgConfig('awesomeSocialNetworkApp.config', {
+            environment: enviroment,
+            constants: {
+                socketServerUrl: 'http://localhost:' + config.socketPort + '/'
+            }
+        }))
+        .pipe(gulp.dest('public/config/'));
+};
+
+gulp.task('public-config:development', function () {
+    return publicConfig('development');
+});
+
+gulp.task('public-config:production', function () {
+    return publicConfig('production');
+});
+
 gulp.task('serve', function () {
     nodemon({
         script: 'bin/www',
@@ -68,6 +89,6 @@ gulp.task('open', function () {
        }));
 });
 
-gulp.task('default', ['serve', 'open']);
+gulp.task('default', ['public-config:development', 'serve', 'open']);
 
 gulp.task('test:integration', ['protractor']);

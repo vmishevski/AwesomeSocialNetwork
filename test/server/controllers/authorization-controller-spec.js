@@ -42,14 +42,20 @@ describe('ctrl:authorization-controller', function (){
     });
 
     it('me:should return logged user', function () {
-
         req.user = { name: 'voislav' };
+        sandbox.stub(User, 'findOne');
+        User.findOne.returns({
+            populate: sandbox.stub()
+                .returns({
+                    exec: sandbox.stub().callsArgWith(0, undefined, req.user)
+                })
+        });
 
         sandbox.spy(res, 'send');
 
         ctrl.me(req, res, next);
 
-        expect(res.send).calledWith(req.user);
+        expect(res.send).calledWith(sinon.match(req.user));
     });
     
     it('register:should save user from request body', function (done) {

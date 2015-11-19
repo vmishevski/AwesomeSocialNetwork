@@ -53,9 +53,9 @@ describe('messageController', function () {
 
     });
 
-    describe('openChatWithUser', function () {
+    describe('getConversation', function () {
         it('should validate userId from query', function () {
-            messageController.openChatWithUser(base.req, base.res, base.next);
+            messageController.getConversation(base.req, base.res, base.next);
             expect(base.res.status).calledWith(400);
         });
 
@@ -68,7 +68,7 @@ describe('messageController', function () {
             base.req.query.userId = 'testuserid';
             base.req.user = new User({});
 
-            messageController.openChatWithUser(base.req, base.res, base.next);
+            messageController.getConversation(base.req, base.res, base.next);
 
             expect(chat.findRoom).calledWith(base.req.user, toUser);
             expect(base.res.status).calledWith(200);

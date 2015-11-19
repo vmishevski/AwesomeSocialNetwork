@@ -20,5 +20,5 @@ if(cluster.isMaster){
         debug('Express server listening on port ' + server.address().port);
     });
 
-    require('../server/socket/worker')();
+    require('../server/socket/worker');
 }

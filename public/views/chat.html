@@ -1,0 +1,39 @@
+
+<div class="list-group">
+    <a href="#" class="list-group-item" ng-repeat="friendModel in vm.friends" ng-click="vm.openConversation(friendModel.friend)">
+        <div class="media">
+            <div class="media-left">
+                <cl-image public-id="{{friendModel.friend.profileImage.public_id}}" class="media-object"  format="jpg">
+                    <cl-transformation crop="thumb" gravity="face" height="32" width="32"/>
+                </cl-image>
+            </div>
+            <div class="media-body media-middle">
+                <h4 class="media-heading">{{friendModel.friend.fullName}}</h4>
+            </div>
+        </div>
+    </a>
+</div>
+
+<div id="conversationContainer">
+    <div ng-repeat="messageModel in vm.conversation.messages">
+
+        <p ng-class="{'text-left': currentUser.id === messageModel.from.userId, 'text-right': currentUser.id !== messageModel.from.userId }">
+            <span>{{messageModel.from.fullName}}: </span>
+            <br />
+            {{messageModel.message}}
+        </p>
+    </div>
+</div>
+
+<div id="chatInputContainer">
+    <form novalidate name="sendMessageForm" ng-submit="vm.sendMessage()">
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" name="chatInput" ng-model="vm.messageToSend" class="form-control" />
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="submit">Send</button>
+                </span>
+            </div>
+        </div>
+    </forM>
+</div>

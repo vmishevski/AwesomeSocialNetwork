@@ -80,9 +80,6 @@ ctrl.respondToFriendRequest = function (req, res, next) {
 
         var me = req.user;
 
-        if(err)
-            return next(err);
-
         var friendRequest;
 
         for(var i =0; i< me.friendshipRequests.length; i++){
@@ -99,7 +96,7 @@ ctrl.respondToFriendRequest = function (req, res, next) {
         if(friendRequest.status === friendRequestStatus.pending){
             if(req.body.answer){
                 friendRequest.status = friendRequestStatus.accepted;
-                me.friends.push({userId: toAccept.id});
+                me.friends.push({friend: toAccept._id});
             }else {
                 friendRequest.status = friendRequestStatus.rejected;
             }

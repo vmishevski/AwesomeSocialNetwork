@@ -12,7 +12,7 @@ exports.FriendshipRequestSchema = new Schema({
 });
 
 exports.FriendSchema = new Schema({
-    userId: {type: Schema.Types.ObjectId, required: true},
+    friend: {type: Schema.Types.ObjectId, ref: 'User'},
     dateBecomeFriends: {type: Date, default: Date.now}
 });
 

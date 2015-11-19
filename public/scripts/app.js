@@ -1,4 +1,3 @@
-
 /**
  * @ngdoc overview
  * @name awesomeSocialNetworkApp
@@ -18,7 +17,8 @@ angular
         'ui.router',
         'ngStorage',
         'ngFileUpload',
-        'cloudinary'
+        'cloudinary',
+        'awesomeSocialNetworkApp.config'
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
 
@@ -29,7 +29,15 @@ angular
             templateUrl: 'views/welcome.html'
         }).state('home', {
             url: '/home',
-            templateUrl: 'views/home.html'
+            views: {
+                '': {
+                    templateUrl: 'views/home.html'
+                },
+                'chat@home': {
+                    templateUrl: 'views/chat.html',
+                    controller: 'ChatCtrl as vm'
+                }
+            }
         }).state('home.settings', {
             url: '/settings',
             templateUrl: 'views/settings.html'
@@ -45,7 +53,7 @@ angular
             url: '/search?q',
             templateUrl: 'views/search.html',
             controller: 'SearchCtrl as vm'
-        }).state('home.timeline',{
+        }).state('home.timeline', {
             url: '/:userId',
             templateUrl: 'views/timeline.html',
             controller: 'TimelineCtrl as vm'

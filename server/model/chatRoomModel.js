@@ -20,4 +20,12 @@ var ChatRoomSchema = new Schema({
     messages: [MessageSchema]
 });
 
+ChatRoomSchema.options.toJSON = {
+    transform: function (doc, ret) {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+    }
+};
+
 mongoose.model('ChatRoom', ChatRoomSchema);

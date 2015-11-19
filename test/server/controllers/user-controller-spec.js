@@ -180,7 +180,7 @@ describe('ctrl:user', function () {
         var requestUserId = mongoose.Types.ObjectId();
         base.req.body.userId = requestUserId;
         base.req.body.answer = 'true';
-        var toAdd = {id: requestUserId};
+        var toAdd = {id: requestUserId, _id: requestUserId};
         var request = {userId: requestUserId, status: 1};
         base.req.user.friendshipRequests = [request];
         base.req.user.save = sandbox.stub().callsArg(0);
@@ -189,7 +189,7 @@ describe('ctrl:user', function () {
         ctrl.respondToFriendRequest(base.req, base.res, base.next);
 
         expect(base.res.status).calledWith(200);
-        expect(base.req.user.friends).to.include({userId: toAdd.id});
+        expect(base.req.user.friends).to.include({friend: toAdd.id});
     });
 
     it('respondToFriendRequest: should set rejected on request when answer is false', function () {

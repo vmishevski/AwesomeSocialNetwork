@@ -11,7 +11,7 @@ var util = require('util');
 
 var messageController = {};
 
-messageController.openChatWithUser = function(req, res, next){
+messageController.getConversation = function(req, res, next){
     req.checkQuery('userId', '"userId" is required field').notEmpty();
 
     var errors = req.validationErrors();

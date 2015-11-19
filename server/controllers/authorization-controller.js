@@ -36,8 +36,15 @@ ctrl.register = function (req, res, next) {
         });
 
 };
-ctrl.me = function (req, res) {
-    res.status(200).send(req.user);
+ctrl.me = function (req, res, next) {
+    User.findOne({_id: req.user.id})
+        .populate('friends.friend')
+        .exec(function (err, user) {
+            if (err)
+                return next(err);
+
+            return res.status(200).send(user);
+        });
 };
 
 ctrl.usernameUnique = function (req, res, next) {
@@ -61,19 +68,19 @@ ctrl.usernameUnique = function (req, res, next) {
 };
 
 ctrl.changePassword = function (req, res, next) {
-    if(!req.body.oldPassword){
+    if (!req.body.oldPassword) {
         return res.status(400).send({'oldPassword': 'Old password is required field'});
     }
 
-    if(!req.body.password){
+    if (!req.body.password) {
         return res.status(400).send({'password': 'Password is required field'});
     }
 
-    if(!req.body.confirmPassword){
+    if (!req.body.confirmPassword) {
         return res.status(400).send({'confirmPassword': 'ConfirmPassword is required field'});
     }
 
-    if(req.body.password !== req.body.confirmPassword){
+    if (req.body.password !== req.body.confirmPassword) {
         return res.status(400).send({'confirmPassword': 'Password do not match'});
     }
 
@@ -104,7 +111,7 @@ ctrl.changePassword = function (req, res, next) {
 
 ctrl.saveProfile = function (req, res, next) {
     User.findOne({_id: req.user.id}, function (err, user) {
-        if(err){
+        if (err) {
             return next(err);
         }
 
@@ -122,16 +129,16 @@ ctrl.saveProfile = function (req, res, next) {
         };
 
         var imageHelper = require('../common/images-helper');
-        if(!!profile.profileImage && !!profile.profileImage.public_id){
-            if(profile.profileImage.public_id === user.profileImage.public_id){
+        if (!!profile.profileImage && !!profile.profileImage.public_id) {
+            if (profile.profileImage.public_id === user.profileImage.public_id) {
                 setProfileImage.resolve();
-            }else{
+            } else {
                 imageHelper.imageExists(profile.profileImage.public_id)
                     .then(function (exists) {
                         if (exists) {
                             user.profileImage = profile.profileImage;
                             return imageHelper.setImageAsValid(profile.profileImage.public_id);
-                        }else{
+                        } else {
                             return setGenericImage()
                         }
                     })
@@ -145,7 +152,7 @@ ctrl.saveProfile = function (req, res, next) {
 
         setProfileImage.promise.then(function () {
             user.save(function (err) {
-                if(err){
+                if (err) {
                     return next(err);
                 }
 

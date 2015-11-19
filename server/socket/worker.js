@@ -13,7 +13,8 @@ var app = express();
 var socketServer = app.listen(0, 'localhost');
 var io = socketIo(socketServer);
 
-io.adapter(ioRedis({ host: config.redisUrl, port: 6379 }));
+var adapter = ioRedis({ host: config.redisUrl, port: 6379 });
+io.adapter(adapter);
 
 // Listen to messages sent from the master. Ignore everything else.
 process.on('message', function(message, connection) {

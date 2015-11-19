@@ -11,7 +11,12 @@ var mongoose = require('mongoose'),
     jwtSocketIo = require('socketio-jwt'),
     debug = require('debug')('app:chat'),
     chatEvents = require('./chatEvents'),
+    redis = require('redis'),
+    socketIoEmitter = require('socket.io-emitter'),
     config = require('config');
+
+var redisClient = redis.createClient(6379, config.redisUrl);
+var emitter = socketIoEmitter({host: config.redisUrl, port: 6379});
 
 var createParticipant = function (user) {
     var obj = user.toObject();
@@ -64,17 +69,26 @@ chat.sendMessage = function (user, roomId, message, callback) {
             message: message
         };
 
+        debug('adding message from', messageModel.from.fullName, ', message:', messageModel.message);
         chatRoom.messages.push(messageModel);
 
         for(var i=0; i< chatRoom.participants.length; i++){
-            var participant =chatRoom.participants[i];
-            if(!!users[participant.userId]){
-                var socket = users[participant.userId];
-                socket.emit(chatEvents.newMessage, {
-                    roomId: roomId,
-                    message: message
-                });
-            }
+            var participant = chatRoom.participants[i];
+            redisClient.get(participant.userId, function (err, socketId) {
+                if(err) {
+                    console.log(err);
+                    return;
+                }
+
+                debug('retrieved', socketId, 'from redis');
+                if(socketId){
+                    debug('emitting', messageModel.message, 'to', socketId);
+                    emitter.to(socketId).emit(chatEvents.newMessage, {
+                        roomId: roomId,
+                        message: messageModel
+                    });
+                }
+            });
         }
 
         chatRoom.save(function (err) {
@@ -129,9 +143,11 @@ io.on('connection', jwtSocketIo.authorize({
     timeout: 15000
 })).on('authenticated', function (socket) {
     debug('user connected and authenticated', socket.decoded_token);
-    users[socket.decoded_token.id] = socket;
-}).on('disconnect', function (socket) {
-    delete user[socket.decoded_token.id];
+    redisClient.set(socket.decoded_token.id, socket.id);
+    socket.on('disconnect', function () {
+        debug('user disconnected');
+        redisClient.del(socket.decoded_token.id);
+    });
 });
 
 module.exports = chat;
