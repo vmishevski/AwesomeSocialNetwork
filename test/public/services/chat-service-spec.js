@@ -3,7 +3,7 @@
  */
 'use strict';
 
-describe.only('chat-service', function () {
+describe('chat-service', function () {
     beforeEach(angular.mock.module('awesomeSocialNetworkApp', 'templates'));
 
     var service, sandbox, client, $rootScope;
