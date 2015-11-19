@@ -8,11 +8,11 @@
         var socket = io(socketServerUrl);
 
         socket.on('connect', function () {
-            $log.debug('socket connected, emiting authenticate:', $rootScope.token);
+            $log.debug('socket connected, emiting authenticate');
             socket.emit('authenticate', {token: $rootScope.token});
         });
 
-        socket.on('broadcastNewMessage', function (event) {
+        socket.on('new-message', function (event) {
             $log.debug('broadcastNewMessage', event);
         });
 

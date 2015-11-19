@@ -3,12 +3,6 @@ describe('service:authenticationService', function () {
 
     var $httpMock, authService, routesUser, loginResponse, meResponse, registerResponse, sandbox;
 
-    beforeEach(function () {
-        module(function ($provide) {
-
-        });
-    });
-
     beforeEach(angular.mock.module('awesomeSocialNetworkApp', 'templates'));
 
     beforeEach(inject(function ($httpBackend, _AuthenticationService_, _routesUser_) {

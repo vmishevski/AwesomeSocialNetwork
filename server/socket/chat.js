@@ -25,7 +25,6 @@ var createParticipant = function (user) {
 };
 
 var chat = {};
-var users = {};
 
 chat.findRoom = function (currentUser, user, callback) {
     ChatRoom.findOne({
@@ -76,11 +75,10 @@ chat.sendMessage = function (user, roomId, message, callback) {
             var participant = chatRoom.participants[i];
             redisClient.get(participant.userId, function (err, socketId) {
                 if(err) {
-                    console.log(err);
-                    return;
+                    debug(err);
+                    throw new Error(err);
                 }
 
-                debug('retrieved', socketId, 'from redis');
                 if(socketId){
                     debug('emitting', messageModel.message, 'to', socketId);
                     emitter.to(socketId).emit(chatEvents.newMessage, {

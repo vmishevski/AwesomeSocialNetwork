@@ -17,9 +17,11 @@ var chatEvents = require('../../../server/socket/chatEvents');
 
 describe('chat', function () {
     var sandbox;
-    io.attach(12000);
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
+
+        io.close();
+        io.attach(12000);
 
         sandbox.spy(io, 'emit');
         sandbox.spy(ChatRoom.prototype, 'save');
@@ -69,10 +71,6 @@ describe('chat', function () {
     it('socket-connect: send auth token on connect', function (done) {
         var user = new User({fullName: 'voislav'});
 
-        io.on('authenticated', function (socket) {
-            expect(socket.decoded_token.id).to.equal(user.id);
-        });
-
         var socket = ioClient('http://localhost:12000/', {forceNew: true});
 
         socket.on('connect', function () {
@@ -84,7 +82,7 @@ describe('chat', function () {
         });
     });
 
-    it('sendMessage: after user connects he should receive message on rooms he participates', function () {
+    it('sendMessage: after user connects he should receive message on rooms he participates', function (done) {
         var fromUser = new User({fullName: 'voislav'});
         var toUser = new User({fullName: 'test user'});
         var message = 'some test message';
