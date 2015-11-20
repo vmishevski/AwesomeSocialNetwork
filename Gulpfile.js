@@ -36,7 +36,7 @@ gulp.task('protractor', ['webdriver_update', 'spawn'], function () {
     gulp.src(['./src/tests/*.js'])
         .pipe(protractor({
             configFile: 'protractor.conf.js',
-            args: ['--baseUrl', 'http://127.0.0.1:3000']
+            args: ['--baseUrl', 'http://127.0.0.1:' + (process.env.PORT || 3000)]
         }))
         .on('error', function(e) {
             throw e;

@@ -30,4 +30,4 @@ deploy:
   on:
     repo: vmishevski/AwesomeSocialNetwork
 env:
-- REDIS_URL=localhost NODE_ENV=TEST
+- REDIS_URL=localhost NODE_ENV=TEST DEBUG=app*
