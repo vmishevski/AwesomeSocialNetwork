@@ -10,6 +10,7 @@ module.exports = {
     getGenericImage: function () {
         return cloudinary.api.resources_by_ids('generic-user.png')
             .then(function (response) {
+                debug(response);
                 return response.resources[0]
             })
             .catch(function (response) {
