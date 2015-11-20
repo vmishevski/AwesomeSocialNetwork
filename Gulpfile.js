@@ -7,7 +7,7 @@ var webdriver_update = require('gulp-protractor').webdriver_update;
 var gulpNgConfig = require('gulp-ng-config');
 var config = require('config');
 var wiredep = require('wiredep').stream;
-var inject = require('gulp-inject')
+var inject = require('gulp-inject');
 
 var watchLivereload = function () {
     gulp.watch(['public/**/*.*'], function (event) {
@@ -19,8 +19,8 @@ var watchLivereload = function () {
 var child;
 
 gulp.task('spawn', function () {
-    var exec = require('child_process').exec;
-    child = exec('node ./bin/www');
+    var spawn = require('child_process').spawn;
+    child = spawn('node', ['bin/www']);
     child.stdout.on('data', function(data) {
         console.log('stdout: ' + data);
     });
@@ -38,10 +38,11 @@ gulp.task('protractor', ['webdriver_update', 'spawn'], function () {
             configFile: 'protractor.conf.js',
             args: ['--baseUrl', 'http://127.0.0.1:3000']
         }))
-        .on('error', function(e) { throw e; })
+        .on('error', function(e) {
+            throw e;
+        })
         .on('end', function () {
-            //child.disconnect();
-            //child.kill('SIGHUP');
+            child.kill('SIGKILL');
         })
 });
 
@@ -49,7 +50,7 @@ gulp.task('webdriver_update', webdriver_update );
 
 gulp.task('kill-spawn', function () {
     if(child){
-        child.kill('SIGHUP');
+        child.kill('SIGKILL');
     }
 });
 

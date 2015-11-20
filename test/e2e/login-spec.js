@@ -34,8 +34,8 @@ describe('login', function(){
     it('should login successfully and go to home page', function () {
         var welcomePage = new WelcomePage();
         welcomePage.get();
-        welcomePage.setEmailToLogin('voislav@it-labs.com');
-        welcomePage.setPasswordToLogin('qweqwe');
+        welcomePage.setEmailToLogin('johndoe@yopmail.com');
+        welcomePage.setPasswordToLogin('123123');
         welcomePage.login();
 
         expect(browser.getLocationAbsUrl()).to.eventually.equal('/home');
