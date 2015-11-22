@@ -199,7 +199,7 @@ describe('ctrl:Profile', function () {
     it('should attach saveProfile func on scope', function () {
         var ctrl = $controller('ProfileCtrl', {$scope: scope, AuthenticationService: authService, $rootScope: $rootScope});
 
-        expect(ctrl.saveProfile).to.be.defined;
+        expect(ctrl.saveProfile).to.exist;
         expect(angular.isFunction(ctrl.saveProfile)).to.be.true;
     });
 

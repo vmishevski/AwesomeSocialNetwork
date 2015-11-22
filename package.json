@@ -38,6 +38,7 @@
     "socket.io-redis": "^0.1.4",
     "socketio-jwt": "^4.3.3",
     "sticky-session": "^1.0.2",
+    "supertest": "^1.1.0",
     "underscore": "^1.8.3",
     "validator": "^4.2.1"
   },

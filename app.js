@@ -1,5 +1,6 @@
 ﻿var express = require('express');
 var path = require('path');
+var mongoose = require('mongoose');
 var favicon = require('serve-favicon');
 //var logger = require('morgan');
 var debug = require('debug')('app');
@@ -34,6 +35,14 @@ app.use(function (req, res, next) {
 });
 
 // error handlers
+
+app.use(function (err, req, res, next) {
+   if(err instanceof mongoose.Error.ValidationError){
+       res.status(400).send(err);
+   }else{
+       next(err);
+   }
+});
 
 // development error handler
 // will print stacktrace

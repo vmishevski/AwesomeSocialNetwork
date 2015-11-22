@@ -51,7 +51,7 @@ module.exports = function (app) {
     
     router.post('/register', authorizationCtrl.register);
 
-    router.get('/usernameUnique', authorizationCtrl.usernameUnique);
+    router.get('/usernameUnique', passport.authenticate('jwt', {session: false}), authorizationCtrl.usernameUnique);
 
     router.post('/changePassword', passport.authenticate('jwt', {session: false}), authorizationCtrl.changePassword);
 

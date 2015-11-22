@@ -25,7 +25,7 @@ describe('ctrl:HeaderCtrl', function () {
         expect(ctrl.search).to.exist;
         expect(angular.isFunction(ctrl.search)).to.be.ok;
 
-        expect(ctrl.searchValue).to.defined;
+        expect(ctrl.searchValue).to.exist;
     });
 
     it('should attach logout function', function () {

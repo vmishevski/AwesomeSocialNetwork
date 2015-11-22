@@ -110,6 +110,10 @@ ctrl.changePassword = function (req, res, next) {
 };
 
 ctrl.saveProfile = function (req, res, next) {
+    if (!req.body.fullName) {
+        return res.status(400).send({fullName: 'Full name is required'});
+    }
+
     User.findOne({_id: req.user.id}, function (err, user) {
         if (err) {
             return next(err);
@@ -128,7 +132,6 @@ ctrl.saveProfile = function (req, res, next) {
                 });
         };
 
-        var imageHelper = require('../common/images-helper');
         if (!!profile.profileImage && !!profile.profileImage.public_id) {
             if (profile.profileImage.public_id === user.profileImage.public_id) {
                 setProfileImage.resolve();

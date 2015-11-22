@@ -3,14 +3,13 @@
  */
 'use strict';
 
+var helper = require('../helpers');
 var mongoose = require('mongoose');
 var chat = require('../../../server/socket/chat');
 var ChatRoom = mongoose.model('ChatRoom');
 var sinon = require('sinon');
 var expect = require('chai').expect;
-var config = require('config');
 var User = mongoose.model('User');
-var jwt = require('jwt-simple');
 var io = require('../../../server/socket/worker').io;
 var ioClient = require('socket.io-client');
 var chatEvents = require('../../../server/socket/chatEvents');
@@ -74,7 +73,7 @@ describe('chat', function () {
         var socket = ioClient('http://localhost:12000/', {forceNew: true});
 
         socket.on('connect', function () {
-            var token = jwt.encode(user, config.tokenSecret);
+            var token = helper.getToken(user);
             socket.on('authenticated', function () {
                 done();
             });
@@ -92,7 +91,7 @@ describe('chat', function () {
         var socket = ioClient('http://localhost:12000/', {forceNew: true});
 
         // login toUser
-        socket.emit('authenticate',{token: jwt.encode(toUser, config.tokenSecret)});
+        socket.emit('authenticate',{token: helper.getToken(toUser)});
         socket.on(chatEvents.newMessage, function (data) {
             expect(data.message.message).to.equal(message);
             expect(data.message.from.userId).to.equal(fromUser.id);

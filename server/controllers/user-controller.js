@@ -106,7 +106,7 @@ ctrl.respondToFriendRequest = function (req, res, next) {
             if(err)
                 return next(err);
 
-            return res.status(200).send('Success');
+            return res.status(200).send(me);
         });
     })
 };
@@ -125,8 +125,6 @@ ctrl.profile = function (req, res, next) {
 
         if(!user)
             return res.status(404).send('User with id='+req.query.userId +' not found');
-
-
 
         return res.status(200).send(user);
     });

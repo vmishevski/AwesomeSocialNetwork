@@ -3,7 +3,6 @@
  */
 'use strict';
 var messageController = require('../../../server/controllers/message-controller');
-var expect = require('chai').expect;
 var sinon = require('sinon');
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
