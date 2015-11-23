@@ -36,6 +36,10 @@ angular
                 'chat@home': {
                     templateUrl: 'views/chat.html',
                     controller: 'ChatCtrl as vm'
+                },
+                'conversations@home': {
+                    templateUrl: 'views/conversations.html',
+                    controller: 'ConversationsCtrl as vm'
                 }
             }
         }).state('home.settings', {

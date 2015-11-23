@@ -21,7 +21,8 @@ var events = {
     userLogoutEvent: 'user-logout-event',
     searchStart: 'search-start',
     searchFinish: 'search-finish',
-    newMessage: 'new-message'
+    newMessage: 'new-message',
+    openConversation: 'open-conversation'
 };
 
 angular.module('awesomeSocialNetworkApp')

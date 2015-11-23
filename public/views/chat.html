@@ -13,27 +13,3 @@
         </div>
     </a>
 </div>
-
-<div id="conversationContainer">
-    <div ng-repeat="messageModel in vm.conversation.messages">
-
-        <p ng-class="{'text-left': currentUser.id === messageModel.from.userId, 'text-right': currentUser.id !== messageModel.from.userId }">
-            <span>{{messageModel.from.fullName}}: </span>
-            <br />
-            {{messageModel.message}}
-        </p>
-    </div>
-</div>
-
-<div id="chatInputContainer">
-    <form novalidate name="sendMessageForm" ng-submit="vm.sendMessage()">
-        <div class="form-group">
-            <div class="input-group">
-                <input type="text" name="chatInput" ng-model="vm.messageToSend" class="form-control" />
-                <span class="input-group-btn">
-                    <button class="btn btn-primary" type="submit">Send</button>
-                </span>
-            </div>
-        </div>
-    </forM>
-</div>
