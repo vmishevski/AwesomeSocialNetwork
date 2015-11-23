@@ -2,16 +2,17 @@
  * Created by Voislav on 11/15/2015.
  */
 'use strict';
+
+var helpers = require('../helpers');
 var messageController = require('../../../server/controllers/message-controller');
 var sinon = require('sinon');
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var ChatRoom = mongoose.model('ChatRoom');
 var validator = require('express-validator');
-var helpers = require('../helpers');
 var chat = require('../../../server/socket/chat');
 
-describe('messageController', function () {
+describe.only('messageController', function () {
     var base, sandbox;
 
     beforeEach(function () {
