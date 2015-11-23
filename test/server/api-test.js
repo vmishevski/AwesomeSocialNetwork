@@ -35,7 +35,7 @@ describe('api/user', function () {
                 .send(user)
                 .expect(200)
                 .end(function (err) {
-                    if(err)
+                    if (err)
                         return done(err);
                     User.findOne({email: user.email, fullName: user.fullName}, function (err, u) {
                         if (err)
@@ -134,7 +134,7 @@ describe('api/user', function () {
                     request.getAuthenticated('/api/user/me', me)
                         .expect(200)
                         .end(function (err, res) {
-                            if(err)
+                            if (err)
                                 return done(err);
                             expect(res.body.friends).not.empty;
                             expect(res.body.friends[0].friend.id).to.equal(friend.id);
@@ -192,7 +192,7 @@ describe('api/user', function () {
                 })
                 .expect(200)
                 .end(function (err, res) {
-                    if(err)
+                    if (err)
                         return done(err);
                     User.findOne({_id: user._id}, function (err, u) {
                         expect(u.hashed_password !== user.hashed_password);
@@ -220,7 +220,7 @@ describe('api/user', function () {
                 })
                 .expect(400)
                 .end(function (err, res) {
-                    if(err)
+                    if (err)
                         return done(err);
                     expect(res.body).to.have.property('oldPassword');
                     done(err);
@@ -236,7 +236,7 @@ describe('api/user', function () {
                 })
                 .expect(400)
                 .end(function (err, res) {
-                    if(err)
+                    if (err)
                         return done(err);
                     expect(res.body).to.have.property('oldPassword');
                     done(err);
@@ -251,7 +251,7 @@ describe('api/user', function () {
                 })
                 .expect(400)
                 .end(function (err, res) {
-                    if(err)
+                    if (err)
                         return done(err);
                     expect(res.body).to.have.property('password');
                     done(err);
@@ -266,7 +266,7 @@ describe('api/user', function () {
                 })
                 .expect(400)
                 .end(function (err, res) {
-                    if(err)
+                    if (err)
                         return done(err);
                     expect(res.body).to.have.property('confirmPassword');
                     done(err);
@@ -282,7 +282,7 @@ describe('api/user', function () {
                 })
                 .expect(400)
                 .end(function (err, res) {
-                    if(err)
+                    if (err)
                         return done(err);
                     expect(res.body).to.have.property('confirmPassword');
                     done(err);
@@ -376,31 +376,31 @@ describe('api/user', function () {
     });
 
     describe('/search', function () {
-       it('should return users which emails contain query', function (done) {
-           q.all([helpers.getTestUser('tofind1@test.com','tofind1'), helpers.getTestUser('tofind2@test.com','tofind2')])
-               .spread(function (user1, user2) {
-                   request.getAuthenticated('/api/user/search?query=tofind', user1)
-                       .expect(200)
-                       .end(function (err, res) {
-                           expect(res.body instanceof Array).to.be.true;
-                           expect(res.body.length).to.equal(2);
-                           expect(user1._id.equals(res.body[0].id) || user2._id.equals(res.body[0].id)).to.be.true;
-                           expect(user1._id.equals(res.body[1].id) || user2._id.equals(res.body[1].id)).to.be.true;
-                           done(err);
-                       })
-               });
-       });
+        it('should return users which emails contain query', function (done) {
+            q.all([helpers.getTestUser('tofind1@test.com', 'tofind1'), helpers.getTestUser('tofind2@test.com', 'tofind2'), new helpers.UserBuilder().withRandomProperties().save()])
+                .spread(function (user1, user2, me) {
+                    request.getAuthenticated('/api/user/search?query=tofind', me)
+                        .expect(200)
+                        .end(function (err, res) {
+                            expect(res.body instanceof Array).to.be.true;
+                            expect(res.body.length).to.equal(2);
+                            expect(user1._id.equals(res.body[0].id) || user2._id.equals(res.body[0].id)).to.be.true;
+                            expect(user1._id.equals(res.body[1].id) || user2._id.equals(res.body[1].id)).to.be.true;
+                            done(err);
+                        })
+                });
+        });
 
         it('should not return users which dont contain query', function (done) {
-            q.all([helpers.getTestUser('tofind1@test.com','tofind1'), helpers.getTestUser('notwhatyoulookingfor@test.com','notwhatyoulookingfor')])
-                .spread(function (user1, user2) {
-                    request.getAuthenticated('/api/user/search?query=tofind', user1)
+            q.all([helpers.getTestUser('tofind1@test.com', 'tofind1'), helpers.getTestUser('notwhatyoulookingfor@test.com', 'notwhatyoulookingfor'), new helpers.UserBuilder().withRandomProperties().save()])
+                .spread(function (user1, user2, me) {
+                    request.getAuthenticated('/api/user/search?query=tofind', me)
                         .expect(200)
                         .end(function (err, res) {
                             expect(res.body.length).to.equal(1);
                             expect(user1._id.equals(res.body[0].id) || user2._id.equals(res.body[0].id)).to.be.true;
                             done(err);
-                        })
+                        });
                 });
         });
 
@@ -410,6 +410,20 @@ describe('api/user', function () {
                     .expect(400);
             });
         });
+
+        it('should not return current logged user', function (done) {
+            q.all([new helpers.UserBuilder().withRandomProperties().withFullName('tofind1@test.com').save(),
+                    new helpers.UserBuilder().withRandomProperties().withFullName('tofind2@test.com').save()])
+                .spread(function (user1, me) {
+                    request.getAuthenticated('/api/user/search?query=tofind', me)
+                        .expect(200)
+                        .end(function (err, res) {
+                            expect(res.body.length).to.equal(1);
+                            expect(user1._id.equals(res.body[0].id)).to.be.true;
+                            done(err);
+                        })
+                });
+        })
     });
 
     describe('addFriend', function () {
@@ -454,7 +468,7 @@ describe('api/user', function () {
                     .send({userId: toAdd.id})
                     .expect(200)
                     .end(function (err) {
-                        if(err)
+                        if (err)
                             return done(err);
                         request.postAuthenticated('/api/user/addFriend', user)
                             .send({userId: toAdd.id})
@@ -487,9 +501,9 @@ describe('api/user', function () {
             new helpers.UserBuilder().withEmail('test1@ttt.com').withFullName('test1').save().then(function (toAccept) {
                 new helpers.UserBuilder().withEmail('test2@ttt.com').withFullName('test2').withFriendRequest(new helpers.FriendRequestBuilder(toAccept)).save().then(function (user2) {
                     request.postAuthenticated('/api/user/respondToFriendRequest', user2)
-                        .send({userId: toAccept.id, answer:true})
+                        .send({userId: toAccept.id, answer: true})
                         .expect(200, function (err, res) {
-                            if(err)
+                            if (err)
                                 return done(err);
                             expect(res.body.friends).exist;
                             expect(res.body.friends).not.empty;
@@ -506,7 +520,7 @@ describe('api/user', function () {
                     request.postAuthenticated('/api/user/respondToFriendRequest', user2)
                         .send({userId: toAccept.id, answer: false})
                         .expect(200, function (err, res) {
-                            if(err)
+                            if (err)
                                 return done(err);
                             expect(res.body.friends).exist;
                             expect(res.body.friends).empty;
@@ -520,17 +534,17 @@ describe('api/user', function () {
 
         it('should respond with 404 when user does not have pending request for that user', function () {
             return q.all([new helpers.UserBuilder().withRandomProperties().save(),
-                new helpers.UserBuilder().withRandomProperties().save()])
+                    new helpers.UserBuilder().withRandomProperties().save()])
                 .spread(function (me, toAccept) {
                     return request.postAuthenticated('/api/user/respondToFriendRequest', me)
-                        .send({userId: toAccept.id, answer:true})
+                        .send({userId: toAccept.id, answer: true})
                         .expect(404);
                 });
         });
 
         it('should check that user is authorized', function () {
             return request.post('/api/user/respondToFriendRequest')
-                .send({userId: 'some-id', answer:true})
+                .send({userId: 'some-id', answer: true})
                 .expect(401);
         });
 
