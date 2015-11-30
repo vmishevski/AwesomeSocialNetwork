@@ -4,6 +4,8 @@
 'use strict';
 
 process.env.NODE_ENV = 'test';
+require('app-module-path').addPath(__dirname+ '/../../');
+var express = require('express');
 var mockgoose = require('mockgoose');
 var mongoose = require('mongoose');
 mockgoose(mongoose);
@@ -12,7 +14,7 @@ var sinonChai = require('sinon-chai');
 var chai = require('chai');
 chai.use(sinonChai);
 
-var app = require('../../app');
+var app = require('../../lib/api/app');
 var request = require('supertest')(app);
 var User = mongoose.model('User');
 var authHeader = 'Authorization';
@@ -129,3 +131,7 @@ UserBuilder.prototype.save = function () {
 
 exports.UserBuilder = UserBuilder;
 exports.FriendRequestBuilder = FriendRequestBuilder;
+
+var app = express();
+app.set('port', 12000);
+exports.app = app;

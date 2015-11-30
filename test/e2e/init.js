@@ -1,11 +1,13 @@
 /**
  * Created by voislav.mishevski on 11/20/2015.
  */
+
+require('app-module-path').addPath(__dirname+ '/../../');
 var mongoose = require('mongoose');
 var config = require('config');
-require('../../server/model/userModel');
-require('../../server/model/friendshipModels');
-require('../../server/model/chatRoomModel');
+require('lib/models/userModel');
+require('lib/models/friendshipModels');
+require('lib/models/chatRoomModel');
 
 before(function (next) {
     console.log('connecting to', config.db);

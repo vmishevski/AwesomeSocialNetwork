@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www",
+    "start": "node ./index",
     "postinstall": "cd public && bower install && cd ..",
     "test": "istanbul cover ./node_modules/mocha/bin/_mocha test/server/**/*.js  --dir ./coverage/server/ --report lcovonly -- -R spec && karma start --browsers Firefox --single-run && ./node_modules/.bin/lcov-result-merger 'coverage/**/*lcov.info' | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage && gulp test:integration"
   },
@@ -13,6 +13,7 @@
     "name": "Voislav"
   },
   "dependencies": {
+    "app-module-path": "^1.0.4",
     "bcrypt": "^0.8.5",
     "body-parser": "~1.8.1",
     "bower": "^1.6.5",
@@ -23,7 +24,6 @@
     "express": "~4.9.0",
     "express-validator": "^2.18.0",
     "gulp-ng-config": "^1.2.1",
-    "jade": "~1.6.0",
     "jwt-simple": "^0.3.1",
     "mongoose": "^4.1.10",
     "passport": "^0.3.0",
@@ -38,6 +38,7 @@
     "socket.io-redis": "^0.1.4",
     "socketio-jwt": "^4.3.3",
     "sticky-session": "^1.0.2",
+    "strong-cluster-control": "^2.2.1",
     "supertest": "^1.1.0",
     "underscore": "^1.8.3",
     "validator": "^4.2.1"

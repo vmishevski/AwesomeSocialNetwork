@@ -3,16 +3,18 @@
  */
 'use strict';
 
+
+
 var helpers = require('../helpers');
-var messageController = require('../../../server/controllers/message-controller');
+var messageController = require('../../../lib/api/controllers/message-controller');
 var sinon = require('sinon');
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var ChatRoom = mongoose.model('ChatRoom');
 var validator = require('express-validator');
-var chat = require('../../../server/socket/chat');
+var chat = require('lib/socket/chat');
 
-describe.only('messageController', function () {
+xdescribe('messageController', function () {
     var base, sandbox;
 
     beforeEach(function () {

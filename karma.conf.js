@@ -13,10 +13,10 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
-            'public/scripts/**/*.js',
+            'lib/public/scripts/**/*.js',
             'test/public/helpers.js',
             'test/public/**/*spec.js',
-            'public/views/**/*.html'
+            'lib/public/views/**/*.html'
         ],
 
         // list of files to exclude
@@ -68,12 +68,12 @@ module.exports = function (config) {
         },
 
         ngHtml2JsPreprocessor: {
-            stripPrefix: 'public/',
+            stripPrefix: 'lib/public/',
             moduleName: 'templates'
         },
 
         wiredep: {
-            cwd: 'public',
+            cwd: 'lib/public',
             exclude: ['blueimp*'],
             devDependencies: true
         },

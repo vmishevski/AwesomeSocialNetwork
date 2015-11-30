@@ -1,5 +1,5 @@
 ﻿var mongoose = require('mongoose');
-require('../../../server/model');
+require('../../../lib/models');
 
 describe('model:user', function (){
     var User = mongoose.model('User');

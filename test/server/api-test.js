@@ -7,11 +7,11 @@ var User = mongoose.model('User');
 var expect = require('chai').expect;
 var sinon = require('sinon');
 var q = require('q');
-var imageHelper = require('../../server/common/images-helper');
+var imageHelper = require('../../lib/api/common/images-helper');
 var mockgoose = require('mockgoose');
 
 var request = helpers.request;
-var friendshipStatus = require('../../server/model/friendshipRequestStatus');
+var friendshipStatus = require('../../lib/models/friendshipRequestStatus');
 
 describe('api/user', function () {
     var sandbox, genericImageId = 'generic-image-id';

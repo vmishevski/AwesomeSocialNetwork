@@ -5,30 +5,29 @@
 
 var helper = require('../helpers');
 var mongoose = require('mongoose');
-var chat = require('../../../server/socket/chat');
+var chat = require('lib/socket/chat');
 var ChatRoom = mongoose.model('ChatRoom');
 var sinon = require('sinon');
 var expect = require('chai').expect;
 var User = mongoose.model('User');
-var io = require('../../../server/socket/worker').io;
 var ioClient = require('socket.io-client');
-var chatEvents = require('../../../server/socket/chatEvents');
+var chatEvents = require('../../../lib/socket/chatEvents');
+var io = require('lib/httpServer').io;
 
 describe('chat', function () {
     var sandbox;
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
 
-        io.close();
         io.attach(12000);
 
-        sandbox.spy(io, 'emit');
         sandbox.spy(ChatRoom.prototype, 'save');
         sandbox.stub(ChatRoom, 'findOne');
     });
 
     afterEach(function () {
         sandbox.restore();
+        io.close();
     });
 
     it('findRoom: when current user opens chat with another user, should create the room if it doesn\'t exist', function (done) {
@@ -73,6 +72,7 @@ describe('chat', function () {
         var socket = ioClient('http://localhost:12000/', {forceNew: true});
 
         socket.on('connect', function () {
+            console.log('connected');
             var token = helper.getToken(user);
             socket.on('authenticated', function () {
                 done();

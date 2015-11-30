@@ -1,0 +1,23 @@
+<span>Conversations</span>
+
+<style>
+    #conversationWrapper{
+        position:fixed;
+        bottom:0;
+    }
+    #bottom-sidebar-wrapper{
+
+    }
+    .conversation{
+        width:100px;
+        height:200px;
+        position:relative;
+    }
+
+</style>
+
+<div id="conversationWrapper">
+    <div ng-repeat="convo in vm.conversations">
+        <conversation class="conversation"></conversation>
+    </div>
+</div>

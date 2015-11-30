@@ -10,7 +10,7 @@ var wiredep = require('wiredep').stream;
 var inject = require('gulp-inject');
 
 var watchLivereload = function () {
-    gulp.watch(['public/**/*.*'], function (event) {
+    gulp.watch(['lib/public/**/*.*'], function (event) {
         gulp.src(event.path, {read: false})
             .pipe(livereload());
     });
@@ -20,7 +20,7 @@ var child;
 
 gulp.task('spawn', function () {
     var spawn = require('child_process').spawn;
-    child = spawn('node', ['bin/www']);
+    child = spawn('node', ['index']);
     child.stdout.on('data', function(data) {
         console.log('stdout: ' + data);
     });
@@ -55,14 +55,14 @@ gulp.task('kill-spawn', function () {
 });
 
 var publicConfig = function (enviroment) {
-    return gulp.src('public/scripts/config/config.json')
+    return gulp.src('lib/public/scripts/config/config.json')
         .pipe(gulpNgConfig('awesomeSocialNetworkApp.config', {
             environment: enviroment,
             constants: {
                 socketServerUrl: 'http://localhost:' + config.socketPort + '/'
             }
         }))
-        .pipe(gulp.dest('public/scripts/config/'));
+        .pipe(gulp.dest('lib/public/scripts/config/'));
 };
 
 gulp.task('public-config:development', function () {
@@ -75,8 +75,8 @@ gulp.task('public-config:production', function () {
 
 gulp.task('serve', function () {
     nodemon({
-        script: 'bin/www',
-        ignore: ['public/**', 'spec/**']
+        script: 'index.js',
+        ignore: ['lib/public/**', 'test/**']
     }).on('start', function () {
         livereload.reload();
         livereload.listen();
@@ -96,22 +96,14 @@ gulp.task('default', ['public-config:development', 'injectScripts', 'serve', 'op
 
 gulp.task('test:integration', ['protractor']);
 
-gulp.task('wiredep', function () {
-    gulp.src('public/index.html')
-        .pipe(wiredep({
-            cwd: 'public'
-        }))
-        .pipe(gulp.dest('./public'));
-});
-
 gulp.task('injectScripts', function () {
-    var target = gulp.src('public/index.html');
+    var target = gulp.src('lib/public/index.html');
 
     return target
         .pipe(wiredep({
-            cwd: 'public',
+            cwd: 'lib/public',
             exclude: ['blueimp*']
         }))
-        .pipe(inject(gulp.src(['public/scripts/**/*.js'], {read: false}), {relative: true}))
-        .pipe(gulp.dest('./public'));
+        .pipe(inject(gulp.src(['lib/public/scripts/**/*.js'], {read: false}), {relative: true}))
+        .pipe(gulp.dest('./lib/public'));
 });
