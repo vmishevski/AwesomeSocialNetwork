@@ -10,7 +10,7 @@ cache:
   - public/bower_components
 before_script:
 - npm install bower -g
-- cd public && bower install && cd ..
+- cd lib/public && bower install && cd ../../
 - npm install protractor -g
 - export DISPLAY=:99.0
 - sh -e /etc/init.d/xvfb start
