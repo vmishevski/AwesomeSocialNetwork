@@ -6,7 +6,7 @@
 describe('chat-service', function () {
     beforeEach(angular.mock.module('awesomeSocialNetworkApp', 'templates'));
 
-    var service, sandbox, client, $rootScope;
+    var sandbox, client, $rootScope;
 
     beforeEach(function () {
         sandbox = sinon.sandbox.create();
@@ -15,8 +15,9 @@ describe('chat-service', function () {
             emit: sandbox.stub()
         };
         window.io =sandbox.stub().returns(client);
-        inject(function (_$rootScope_) {
+        inject(function (_$rootScope_, $httpBackend) {
             $rootScope = _$rootScope_;
+            $httpBackend.when('GET','api/user/me').respond(200, {});
         });
     });
 
@@ -25,8 +26,8 @@ describe('chat-service', function () {
     });
 
     it('should create socket client on provided socket url', function () {
-        inject(function (socketService, socketServerUrl) {
-            expect(io).calledWith(socketServerUrl);
+        inject(function (socketService) {
+            expect(io).called;
         });
     });
 

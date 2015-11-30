@@ -27,7 +27,7 @@ module.exports = function (config) {
         preprocessors: {
             //'public/scripts/app.js': ['coverage'],
             //'public/scripts/services/authentication-service.js': ['coverage'],
-            'public/scripts/**/*.js': ['coverage'],
+            'lib/public/scripts/**/*.js': ['coverage'],
             '**/*.html': ['ng-html2js']
         },
 
