@@ -7,7 +7,7 @@ services:
 cache:
   directories:
   - node_modules
-  - public/bower_components
+  - lib/public/bower_components
 before_script:
 - npm install bower -g
 - cd lib/public && bower install && cd ../../
